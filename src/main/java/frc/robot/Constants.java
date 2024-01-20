@@ -60,8 +60,12 @@ public final class Constants {
   }
 
   public static final class Flywheel {
-    public static final double GEAR_RATIO = 4.0;
     public static final int MOTOR_ONE_CAN_ID = 10;
     public static final int MOTOR_TWO_CAN_ID = 11;
+    public static final boolean WHEEL_ONE_INVERT = false;
+    public static final boolean WHEEL_TWO_INVERT = true;
+
+    public static final double FLYWHEEL_MOMENT_OF_INERTIA = 0.032; // need to be set
+    public static final double FLYWHEEL_GEAR_RATIO = 4.0;
   }
 }
