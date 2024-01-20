@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -35,7 +38,24 @@ public final class Constants {
     REPLAY
   }
 
-  public static final class flags {
+  public static final class Flags {
     public static final boolean usePathPlanner = false;
+  }
+
+  public static final class Drivebase {
+    public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
+    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
+    public static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
+    public static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
+    public static final double DRIVE_BASE_RADIUS =
+        Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
+    public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
+
+    public static final Translation2d[] translations = {
+      new Translation2d(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
+      new Translation2d(TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0),
+      new Translation2d(-TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
+      new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
+    }; // FL, FR, BL, BR
   }
 }

@@ -22,7 +22,7 @@ public class RobotContainer {
     configureDefaultCommands();
     configureBindings();
 
-    if (Constants.flags.usePathPlanner) {
+    if (Constants.Flags.usePathPlanner) {
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     } else {
       autoChooser = null;
@@ -39,6 +39,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Constants.flags.usePathPlanner ? autoChooser.get() : null;
+    return Constants.Flags.usePathPlanner ? autoChooser.get() : null;
   }
 }
