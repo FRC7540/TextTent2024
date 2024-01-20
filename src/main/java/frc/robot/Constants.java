@@ -58,4 +58,10 @@ public final class Constants {
       new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
     }; // FL, FR, BL, BR
   }
+
+  public static final class Flywheel {
+    public static final double GEAR_RATIO = 4.0;
+    public static final int MOTOR_ONE_CAN_ID = 10;
+    public static final int MOTOR_TWO_CAN_ID = 11;
+  }
 }
