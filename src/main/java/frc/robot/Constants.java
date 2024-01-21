@@ -43,7 +43,7 @@ public final class Constants {
   }
 
   public static final class Flags {
-    public static final boolean usePathPlanner = false;
+    public static final boolean USE_PATH_PLANNER = false;
   }
 
   public static final class Drivebase {

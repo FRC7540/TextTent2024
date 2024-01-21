@@ -28,7 +28,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
 
-    if (Constants.Flags.usePathPlanner) {}
+    if (Constants.Flags.USE_PATH_PLANNER) {}
   }
 
   @Override
