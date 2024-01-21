@@ -7,7 +7,10 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -38,12 +41,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    flywheelSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              flywheelSubsystem.setBothFlywheelSpeeds(controller.getLeftY() * 11.0);
-            },
-            flywheelSubsystem));
+    new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new InstantCommand(() -> {flywheelSubsystem.setBothFlywheelSpeeds(500);}, flywheelSubsystem));
   }
 
   private void configureDefaultCommands() {}
