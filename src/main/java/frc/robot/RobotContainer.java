@@ -6,12 +6,14 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,7 +29,7 @@ public class RobotContainer {
   private final XboxController controller = new XboxController(0);
 
   public RobotContainer() {
-    flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
+    flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
     // configureDefaultCommands();
     configureBindings();
 
@@ -39,13 +41,13 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    new JoystickButton(controller, XboxController.Button.kX.value)
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  flywheelSubsystem.setBothFlywheelSpeeds(500);
-                },
-                flywheelSubsystem));
+    LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
+    SmartDashboard.putData(
+        new RunCommand(
+            () -> {
+              flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
+            },
+            flywheelSubsystem));
   }
 
   private void configureDefaultCommands() {}
