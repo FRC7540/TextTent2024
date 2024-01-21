@@ -29,8 +29,8 @@ public class FlywheelIOSparkMax implements FlywheelIO {
     wheelOneEncoder = wheelOneSparkMax.getEncoder();
     wheelTwoEncoder = wheelTwoSparkMax.getEncoder();
 
-    wheelOneSparkMax.setInverted(Constants.Flywheel.WHEEL_ONE_INVERT);
-    wheelTwoSparkMax.setInverted(Constants.Flywheel.WHEEL_TWO_INVERT);
+    wheelOneSparkMax.setInverted(Constants.Flywheel.WheelOne.INVERTED);
+    wheelTwoSparkMax.setInverted(Constants.Flywheel.WheelTwo.INVERTED);
     wheelOneSparkMax.setSmartCurrentLimit(40);
     wheelTwoSparkMax.setSmartCurrentLimit(30);
     wheelOneSparkMax.enableVoltageCompensation(12.0);
