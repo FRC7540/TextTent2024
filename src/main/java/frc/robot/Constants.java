@@ -13,7 +13,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -65,7 +68,12 @@ public final class Constants {
     public static final boolean WHEEL_ONE_INVERT = false;
     public static final boolean WHEEL_TWO_INVERT = true;
 
-    public static final double FLYWHEEL_MOMENT_OF_INERTIA = 0.032; // need to be set
-    public static final double FLYWHEEL_GEAR_RATIO = 4.0;
+    public static final double MOMENT_OF_INERTIA = 0.5; // need to be set
+    public static final double GEAR_RATIO = 4.0;
+
+    public static final int MOTOR_COUNT = 1;
+
+    public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
+    public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(12.0);
   }
 }

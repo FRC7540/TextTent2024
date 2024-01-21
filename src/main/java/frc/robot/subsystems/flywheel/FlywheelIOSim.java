@@ -7,14 +7,14 @@ import frc.robot.Constants;
 public class FlywheelIOSim implements FlywheelIO {
   private FlywheelSim wheelOneSim =
       new FlywheelSim(
-          DCMotor.getNEO(1),
-          Constants.Flywheel.FLYWHEEL_GEAR_RATIO,
-          Constants.Flywheel.FLYWHEEL_MOMENT_OF_INERTIA);
+          DCMotor.getNEO(Constants.Flywheel.MOTOR_COUNT),
+          Constants.Flywheel.GEAR_RATIO,
+          Constants.Flywheel.MOMENT_OF_INERTIA);
   private FlywheelSim wheelTwoSim =
       new FlywheelSim(
-          DCMotor.getNEO(1),
-          Constants.Flywheel.FLYWHEEL_GEAR_RATIO,
-          Constants.Flywheel.FLYWHEEL_MOMENT_OF_INERTIA);
+          DCMotor.getNEO(Constants.Flywheel.MOTOR_COUNT),
+          Constants.Flywheel.GEAR_RATIO,
+          Constants.Flywheel.MOMENT_OF_INERTIA);
 
   private double motorOneAppliedVolts = 0.0;
   private double motorTwoAppliedVolts = 0.0;
@@ -38,10 +38,12 @@ public class FlywheelIOSim implements FlywheelIO {
   @Override
   public void setWheelOneVoltage(double volts) {
     wheelOneSim.setInputVoltage(volts);
+    motorOneAppliedVolts = volts;
   }
 
   @Override
   public void setWheelTwoVoltage(double volts) {
     wheelTwoSim.setInputVoltage(volts);
+    motorTwoAppliedVolts = volts;
   }
 }
