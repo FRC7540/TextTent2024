@@ -9,8 +9,12 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class FlywheelSubsystem extends SubsystemBase {
@@ -18,7 +22,10 @@ public class FlywheelSubsystem extends SubsystemBase {
   private final FlywheelIO io;
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
+  @AutoLogOutput(key = "Flywheel/TargetSpeeds")
   private double targetSpeed = 0.0;
+
+  private final SysIdRoutine sysId;
 
   private final LinearSystem<N1, N1, N1> wheelOneFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
@@ -82,6 +89,19 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   public FlywheelSubsystem(FlywheelIO io) {
     this.io = io;
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> {
+                  setBothWheelVoltage(voltage.in(Units.Volts));
+                },
+                null,
+                this));
   }
 
   @Override
@@ -112,6 +132,21 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   public void setBothFlywheelSpeeds(double speed) {
     targetSpeed = speed;
+  }
+
+  private void setBothWheelVoltage(double volts) {
+    io.setWheelOneVoltage(volts);
+    io.setWheelTwoVoltage(volts);
+  }
+
+  /** Returns a command to run a quasistatic test in the specified direction. */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysId.quasistatic(direction);
+  }
+
+  /** Returns a command to run a dynamic test in the specified direction. */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysId.dynamic(direction);
   }
 
   public void stop() {
