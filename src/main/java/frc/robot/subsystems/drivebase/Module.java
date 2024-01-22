@@ -1,3 +1,15 @@
+// Copyright 2021-2024 FRC 6328
+// http://github.com/Mechanical-Advantage
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation or
+// available in the root directory of this project.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
 package frc.robot.subsystems.drivebase;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -12,7 +24,6 @@ public class Module {
 
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
-
   private final int index;
 
   private final SimpleMotorFeedforward driveFeedforward;
@@ -21,7 +32,6 @@ public class Module {
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
-  private double lastPositionMeters = 0.0; // Used for delta calculation
 
   public Module(ModuleIO io, int index) {
     this.io = io;
@@ -147,13 +157,6 @@ public class Module {
   /** Returns the module position (turn angle and drive position). */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
-  }
-
-  /** Returns the module position delta since the last call to this method. */
-  public SwerveModulePosition getPositionDelta() {
-    var delta = new SwerveModulePosition(getPositionMeters() - lastPositionMeters, getAngle());
-    lastPositionMeters = getPositionMeters();
-    return delta;
   }
 
   /** Returns the module state (turn angle and drive velocity). */
