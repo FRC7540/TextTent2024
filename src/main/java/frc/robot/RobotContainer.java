@@ -5,8 +5,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -17,19 +23,31 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
+  public final FlywheelSubsystem flywheelSubsystem;
+
+  private final XboxController controller = new XboxController(0);
 
   public RobotContainer() {
-    configureDefaultCommands();
+    flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
+    // configureDefaultCommands();
     configureBindings();
 
-    if (Constants.Flags.usePathPlanner) {
+    if (Constants.Flags.USE_PATH_PLANNER) {
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     } else {
       autoChooser = null;
     }
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
+    SmartDashboard.putData(
+        new RunCommand(
+            () -> {
+              flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
+            },
+            flywheelSubsystem));
+  }
 
   private void configureDefaultCommands() {}
 
@@ -39,6 +57,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Constants.Flags.usePathPlanner ? autoChooser.get() : null;
+    return Constants.Flags.USE_PATH_PLANNER ? autoChooser.get() : null;
   }
 }
