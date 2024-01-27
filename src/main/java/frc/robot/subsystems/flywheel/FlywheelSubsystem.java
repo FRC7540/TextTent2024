@@ -29,7 +29,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> wheelOneFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNEO(Constants.Flywheel.WheelOne.MOTOR_COUNT),
+          DCMotor.getNeo550(Constants.Flywheel.WheelOne.MOTOR_COUNT),
           Constants.Flywheel.WheelOne.MOMENT_OF_INERTIA,
           Constants.Flywheel.WheelOne.GEAR_RATIO);
 
@@ -59,7 +59,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> wheelTwoFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNEO(Constants.Flywheel.WheelTwo.MOTOR_COUNT),
+          DCMotor.getNeo550(Constants.Flywheel.WheelTwo.MOTOR_COUNT),
           Constants.Flywheel.WheelTwo.MOMENT_OF_INERTIA,
           Constants.Flywheel.WheelTwo.GEAR_RATIO);
 
@@ -119,6 +119,10 @@ public class FlywheelSubsystem extends SubsystemBase {
 
     wheelOneloop.correct(VecBuilder.fill(inputs.wheelOneRadSec));
     wheelTwoloop.correct(VecBuilder.fill(inputs.wheelTwoRadSec));
+    wheelOneController.latencyCompensate(
+        wheelOneFlywheelPlant, Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
+    wheelTwoController.latencyCompensate(
+        wheelTwoFlywheelPlant, Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
 
     wheelOneloop.predict(Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
     wheelTwoloop.predict(Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);

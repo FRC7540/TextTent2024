@@ -6,9 +6,9 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
@@ -35,7 +35,7 @@ public class RobotContainer {
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
     }
 
-    // configureDefaultCommands();
+    configureDefaultCommands();
     configureBindings();
 
     if (Constants.Flags.USE_PATH_PLANNER) {
@@ -47,7 +47,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
-    SmartDashboard.putData(
+    Trigger moais = new Trigger(controller::getAButton);
+    moais.whileTrue(
         new RunCommand(
             () -> {
               flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
@@ -55,7 +56,14 @@ public class RobotContainer {
             flywheelSubsystem));
   }
 
-  private void configureDefaultCommands() {}
+  private void configureDefaultCommands() {
+    flywheelSubsystem.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              flywheelSubsystem.setBothFlywheelSpeeds(0);
+            },
+            flywheelSubsystem));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
