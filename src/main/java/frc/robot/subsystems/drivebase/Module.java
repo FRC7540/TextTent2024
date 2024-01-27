@@ -17,6 +17,11 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import org.littletonrobotics.junction.Logger;
@@ -30,14 +35,16 @@ public class Module {
   private final SimpleMotorFeedforward driveFeedforward;
   private final PIDController driveFeedback;
   private final PIDController turnFeedback;
+
   private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
 
+  private ShuffleboardLayout pidLayout;
+
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
-
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
     switch (Robot.getRuntimeType()) {
@@ -60,6 +67,16 @@ public class Module {
         break;
     }
 
+    if (Preferences.getBoolean("tuningMode", false)) {
+      pidLayout =
+          Shuffleboard.getTab("Tuning").getLayout("MoudlePID", BuiltInLayouts.kList).withSize(4, 4);
+      pidLayout
+          .add("driveFeedback/" + index, this.driveFeedback)
+          .withWidget(BuiltInWidgets.kPIDController);
+      pidLayout
+          .add("turnFeedback/" + index, this.turnFeedback)
+          .withWidget(BuiltInWidgets.kPIDController);
+    }
     turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
     setBrakeMode(true);
   }
