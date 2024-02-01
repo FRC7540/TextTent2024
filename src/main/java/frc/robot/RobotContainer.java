@@ -5,14 +5,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
-import frc.robot.subsystems.drivebase.ModuleIO;
+import frc.robot.subsystems.drivebase.ModuleIOSim;
 import frc.robot.subsystems.drivebase.ModuleIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
@@ -32,27 +31,25 @@ public class RobotContainer {
   public final FlywheelSubsystem flywheelSubsystem;
   public final DrivebaseSubsystem drivebaseSubsystem;
 
-  private final XboxController controller = new XboxController(0);
-
   public RobotContainer() {
     if (Robot.isSimulation()) {
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {});
+              new ModuleIOSim() {},
+              new ModuleIOSim() {},
+              new ModuleIOSim() {},
+              new ModuleIOSim() {});
     } else {
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIONavX(),
-              new ModuleIOSparkMax(),
-              new ModuleIOSparkMax() {},
-              new ModuleIOSparkMax() {},
-              new ModuleIOSparkMax() {});
+              new ModuleIOSparkMax(0) {},
+              new ModuleIOSparkMax(1) {},
+              new ModuleIOSparkMax(2) {},
+              new ModuleIOSparkMax(3) {});
     }
 
     // configureDefaultCommands();
