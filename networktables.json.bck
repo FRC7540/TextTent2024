@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "name": "/Preferences/tuningMode",
+    "type": "boolean",
+    "value": true,
+    "properties": {
+      "persistent": true
+    }
+  }
+]

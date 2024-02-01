@@ -6,5 +6,13 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/USEPATHPLANNER",
+    "type": "boolean",
+    "value": true,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

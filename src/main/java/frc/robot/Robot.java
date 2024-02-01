@@ -13,8 +13,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.lang.reflect.Field;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -38,6 +40,15 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+    // Check our robot prefrences to make sure certian values exsist!
+    try {
+      checkPrefs();
+    } catch (IllegalArgumentException | IllegalAccessException e) {
+      // Probally on account of the fact that im doing stupid reflection with no saftey, we should
+      // be fin without it.
+      System.out.println("reflection broke!");
+      System.out.println(e.getLocalizedMessage());
+    }
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -141,4 +152,16 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  private void checkPrefs() throws IllegalArgumentException, IllegalAccessException {
+    // Goofy ahh reflection
+    for (Field f : Constants.Flags.class.getDeclaredFields()) {
+      Class<?> t = f.getType();
+      if (t == boolean.class) {
+        if (!Preferences.containsKey(f.getName())) {
+          Preferences.setBoolean(f.getName(), f.getBoolean(Constants.Flags.class));
+        }
+      }
+    }
+  }
 }

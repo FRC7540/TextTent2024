@@ -31,8 +31,11 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
+  // Default feature flag settings, should only affect anythign if not intilaized.
+  // WARNING: THIS CLASS IS REFLECTED! DO NOT PUT ANYTHING BUT BOOLEANS!
+  // The varible name will be the name of the prefrence key.
   public static final class Flags {
-    public static final boolean USE_PATH_PLANNER = false;
+    public static final boolean USEPATHPLANNER = true;
   }
 
   public static final class Drivebase {
