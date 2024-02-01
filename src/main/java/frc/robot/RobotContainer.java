@@ -56,7 +56,7 @@ public class RobotContainer {
     // configureDefaultCommands();
     configureBindings();
 
-    if (Preferences.getBoolean("USEPATHPLANNER", false)) {
+    if (Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)) {
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     } else {
       autoChooser = null;
@@ -81,6 +81,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Preferences.getBoolean("USEPATHPLANNER", false) ? autoChooser.get() : null;
+    return Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)
+        ? autoChooser.get()
+        : null;
   }
 }
