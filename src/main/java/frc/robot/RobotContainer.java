@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
+import frc.robot.subsystems.drivebase.ModuleIO;
 import frc.robot.subsystems.drivebase.ModuleIOSim;
 import frc.robot.subsystems.drivebase.ModuleIOSparkMax;
+import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
@@ -33,7 +35,11 @@ public class RobotContainer {
   public final DrivebaseSubsystem drivebaseSubsystem;
 
   public RobotContainer() {
-    if (Robot.isSimulation()) {
+    // Instantiate subsystems
+    // Simulation
+    if (Robot.isSimulation() && !Robot.isReplay) {
+      // We are in a simulation, instantiate simulation classes
+      System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
       drivebaseSubsystem =
           new DrivebaseSubsystem(
@@ -42,7 +48,9 @@ public class RobotContainer {
               new ModuleIOSim() {},
               new ModuleIOSim() {},
               new ModuleIOSim() {});
-    } else {
+    } else if (Robot.isReal()) {
+      // We are on a real robot, instantiate hardware classes
+      System.out.println("Real robot detected! Instantiating subsystems.");
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
       drivebaseSubsystem =
           new DrivebaseSubsystem(
@@ -51,9 +59,20 @@ public class RobotContainer {
               new ModuleIOSparkMax(1) {},
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
+    } else {
+      // Fill evrythign else, we are pribally in a replay!
+      System.out.println("We must be in a replay! Instantiating bare I/O layers.");
+      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIO() {});
+      drivebaseSubsystem =
+          new DrivebaseSubsystem(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
 
-    // configureDefaultCommands();
+    configureDefaultCommands();
     configureBindings();
 
     if (Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)) {
