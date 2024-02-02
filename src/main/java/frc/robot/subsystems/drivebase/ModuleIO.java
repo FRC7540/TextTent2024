@@ -16,7 +16,7 @@ public interface ModuleIO {
     public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
-    public double[] turnCurrentAmps = new double[] {};
+    public double[] turnCurrentAmps = new double[] {0, 0, 0, 0};
   }
 
   /** Updates the set of loggable inputs. */

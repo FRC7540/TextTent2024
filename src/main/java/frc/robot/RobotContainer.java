@@ -9,6 +9,17 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
+import frc.robot.subsystems.drivebase.GyroIO;
+import frc.robot.subsystems.drivebase.GyroIONavX;
+import frc.robot.subsystems.drivebase.ModuleIO;
+import frc.robot.subsystems.drivebase.ModuleIOSim;
+import frc.robot.subsystems.drivebase.ModuleIOSparkMax;
+import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
@@ -25,20 +36,50 @@ public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
   public final FlywheelSubsystem flywheelSubsystem;
-
-  private final XboxController controller = new XboxController(0);
+  public final DrivebaseSubsystem drivebaseSubsystem;
 
   public RobotContainer() {
-    if (Robot.isSimulation()) {
+    // Instantiate subsystems
+    // Simulation
+    if (Robot.isSimulation() && !Robot.isReplay) {
+      // We are in a simulation, instantiate simulation classes
+      System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
-    } else {
+      drivebaseSubsystem =
+          new DrivebaseSubsystem(
+              new GyroIO() {},
+              new ModuleIOSim() {},
+              new ModuleIOSim() {},
+              new ModuleIOSim() {},
+              new ModuleIOSim() {});
+    } else if (Robot.isReal()) {
+      // We are on a real robot, instantiate hardware classes
+      System.out.println("Real robot detected! Instantiating subsystems.");
       flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
+      drivebaseSubsystem =
+          new DrivebaseSubsystem(
+              new GyroIONavX(),
+              new ModuleIOSparkMax(0) {},
+              new ModuleIOSparkMax(1) {},
+              new ModuleIOSparkMax(2) {},
+              new ModuleIOSparkMax(3) {});
+    } else {
+      // Fill evrythign else, we are pribally in a replay!
+      System.out.println("We must be in a replay! Instantiating bare I/O layers.");
+      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIO() {});
+      drivebaseSubsystem =
+          new DrivebaseSubsystem(
+              new GyroIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {},
+              new ModuleIO() {});
     }
 
     configureDefaultCommands();
     configureBindings();
 
-    if (Constants.Flags.USE_PATH_PLANNER) {
+    if (Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)) {
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     } else {
       autoChooser = null;
@@ -71,6 +112,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Constants.Flags.USE_PATH_PLANNER ? autoChooser.get() : null;
+    return Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)
+        ? autoChooser.get()
+        : null;
   }
 }

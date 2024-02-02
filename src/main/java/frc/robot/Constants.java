@@ -16,6 +16,7 @@ package frc.robot;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.util.Units;
@@ -30,8 +31,11 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
+  // Default feature flag settings, should only affect anythign if not intilaized.
+  // WARNING: THIS CLASS IS REFLECTED! DO NOT PUT ANYTHING BUT BOOLEANS!
+  // The varible name will be the name of the prefrence key.
   public static final class Flags {
-    public static final boolean USE_PATH_PLANNER = false;
+    public static final boolean USEPATHPLANNER = true;
   }
 
   public static final class Drivebase {
@@ -42,6 +46,39 @@ public final class Constants {
     public static final double DRIVE_BASE_RADIUS =
         Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
     public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
+    public static final double TURN_GEAR_RATIO = 4;
+    public static final double DRIVE_GEAR_RATIO = 4;
+    public static final double DRIVE_MOMENT_INERTIA = 0.025;
+    public static final double TURN_MOMENT_INERTIA = 0.004;
+    public static final double NOMINAL_LOOP_PERIOD = 0.02;
+
+    public static final class Mod0 {
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final int DRIVE_SPARKMAX_CAN_ID = 12;
+      public static final int TURN_SPARKMAX_CAN_ID = 13;
+      public static final boolean TURN_MOTOR_INVERT = false;
+    }
+
+    public static final class Mod1 {
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final int DRIVE_SPARKMAX_CAN_ID = 14;
+      public static final int TURN_SPARKMAX_CAN_ID = 15;
+      public static final boolean TURN_MOTOR_INVERT = false;
+    }
+
+    public static final class Mod2 {
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final int DRIVE_SPARKMAX_CAN_ID = 16;
+      public static final int TURN_SPARKMAX_CAN_ID = 17;
+      public static final boolean TURN_MOTOR_INVERT = false;
+    }
+
+    public static final class Mod3 {
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final int DRIVE_SPARKMAX_CAN_ID = 18;
+      public static final int TURN_SPARKMAX_CAN_ID = 19;
+      public static final boolean TURN_MOTOR_INVERT = false;
+    }
 
     public static final Translation2d[] MODULE_TRANSLATIONS = {
       new Translation2d(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
