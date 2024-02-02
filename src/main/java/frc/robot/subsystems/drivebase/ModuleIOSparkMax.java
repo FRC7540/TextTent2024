@@ -18,7 +18,6 @@ public class ModuleIOSparkMax implements ModuleIO {
   private final RelativeEncoder turnRelativeEncoder;
   private final AbsoluteEncoder turnAbsoluteEncoder;
 
-  private final boolean isTurnMotorInverted = true;
   private final Rotation2d absoluteEncoderOffset;
 
   public ModuleIOSparkMax(int index) {
@@ -29,6 +28,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         turnSparkMax =
             new CANSparkMax(Constants.Drivebase.Mod0.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
         absoluteEncoderOffset = Constants.Drivebase.Mod0.ABSOULUTE_OFFSET;
+        turnSparkMax.setInverted(Constants.Drivebase.Mod0.TURN_MOTOR_INVERT);
         break;
       case 1:
         driveSparkMax =
@@ -36,20 +36,23 @@ public class ModuleIOSparkMax implements ModuleIO {
         turnSparkMax =
             new CANSparkMax(Constants.Drivebase.Mod1.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
         absoluteEncoderOffset = Constants.Drivebase.Mod1.ABSOULUTE_OFFSET;
+        turnSparkMax.setInverted(Constants.Drivebase.Mod1.TURN_MOTOR_INVERT);
         break;
       case 2:
         driveSparkMax =
-            new CANSparkMax(Constants.Drivebase.Mod1.DRIVE_SPARKMAX_CAN_ID, MotorType.kBrushless);
+            new CANSparkMax(Constants.Drivebase.Mod2.DRIVE_SPARKMAX_CAN_ID, MotorType.kBrushless);
         turnSparkMax =
-            new CANSparkMax(Constants.Drivebase.Mod1.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
+            new CANSparkMax(Constants.Drivebase.Mod2.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
         absoluteEncoderOffset = Constants.Drivebase.Mod2.ABSOULUTE_OFFSET;
+        turnSparkMax.setInverted(Constants.Drivebase.Mod2.TURN_MOTOR_INVERT);
         break;
       case 3:
         driveSparkMax =
-            new CANSparkMax(Constants.Drivebase.Mod1.DRIVE_SPARKMAX_CAN_ID, MotorType.kBrushless);
+            new CANSparkMax(Constants.Drivebase.Mod3.DRIVE_SPARKMAX_CAN_ID, MotorType.kBrushless);
         turnSparkMax =
-            new CANSparkMax(Constants.Drivebase.Mod1.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
+            new CANSparkMax(Constants.Drivebase.Mod3.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
         absoluteEncoderOffset = Constants.Drivebase.Mod3.ABSOULUTE_OFFSET;
+        turnSparkMax.setInverted(Constants.Drivebase.Mod3.TURN_MOTOR_INVERT);
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -65,7 +68,6 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnRelativeEncoder = turnSparkMax.getEncoder();
     turnAbsoluteEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
 
-    turnSparkMax.setInverted(isTurnMotorInverted);
     driveSparkMax.setSmartCurrentLimit(40);
     turnSparkMax.setSmartCurrentLimit(30);
     driveSparkMax.enableVoltageCompensation(12.0);
