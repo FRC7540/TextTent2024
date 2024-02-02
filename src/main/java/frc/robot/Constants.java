@@ -101,24 +101,24 @@ public final class Constants {
     // starting point because that is the (approximate) maximum voltage of a battery.
     public static final class WheelOne {
       public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
-      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(12.0);
+      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
       public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
-      public static final Vector<N1> QELMS = VecBuilder.fill(8.0); // Rads per second
+      public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
       public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-      public static final double MOMENT_OF_INERTIA = 0.5;
+      public static final double MOMENT_OF_INERTIA = 0.0005;
       public static final int MOTOR_COUNT = 1;
       public static final double GEAR_RATIO = 4.0;
-      public static final boolean INVERTED = false;
+      public static final boolean INVERTED = true;
       public static final double MAX_VOLTAGE = 12.0; // Volts
     }
 
     public static final class WheelTwo {
       public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
-      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(12.0);
+      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
       public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
-      public static final Vector<N1> QELMS = VecBuilder.fill(8.0); // Rads per second
+      public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
       public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-      public static final double MOMENT_OF_INERTIA = 0.5;
+      public static final double MOMENT_OF_INERTIA = 0.0005;
       public static final int MOTOR_COUNT = 1;
       public static final double GEAR_RATIO = 4.0;
       public static final boolean INVERTED = false;

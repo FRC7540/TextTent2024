@@ -6,9 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
@@ -33,6 +34,8 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   public final FlywheelSubsystem flywheelSubsystem;
   public final DrivebaseSubsystem drivebaseSubsystem;
+
+  public XboxController controller = new XboxController(0);
 
   public RobotContainer() {
     // Instantiate subsystems
@@ -84,7 +87,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
-    SmartDashboard.putData(
+    Trigger moais = new Trigger(controller::getAButton);
+    moais.whileTrue(
         new RunCommand(
             () -> {
               flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
@@ -92,7 +96,14 @@ public class RobotContainer {
             flywheelSubsystem));
   }
 
-  private void configureDefaultCommands() {}
+  private void configureDefaultCommands() {
+    flywheelSubsystem.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              flywheelSubsystem.setBothFlywheelSpeeds(0);
+            },
+            flywheelSubsystem));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
