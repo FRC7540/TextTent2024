@@ -108,8 +108,8 @@ public class RobotContainer {
             flywheelSubsystem));
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDrive(
-            driverController::getLeftX,
             driverController::getLeftY,
+            driverController::getLeftX,
             driverController::getRightX,
             drivebaseSubsystem));
   }

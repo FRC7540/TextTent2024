@@ -29,8 +29,8 @@ public class DefaultDrive extends Command {
   public void execute() {
     drivebaseSubsystem.runVelocity(
         new ChassisSpeeds(
-            MathUtil.applyDeadband(directionX.getAsDouble(), 0.1),
-            MathUtil.applyDeadband(directionY.getAsDouble(), 0.1),
-            MathUtil.applyDeadband(rotation.getAsDouble(), 0.1)));
+            -MathUtil.applyDeadband(directionX.getAsDouble(), 0.1),
+            -MathUtil.applyDeadband(directionY.getAsDouble(), 0.1),
+            -MathUtil.applyDeadband(rotation.getAsDouble(), 0.1)));
   }
 }
