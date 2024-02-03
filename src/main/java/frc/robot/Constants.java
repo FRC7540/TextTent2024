@@ -38,6 +38,11 @@ public final class Constants {
     public static final boolean USEPATHPLANNER = true;
   }
 
+  public static final class HID {
+    public static final int operatorControlerPort = 1;
+    public static final int driverControllerPort = 0;
+  }
+
   public static final class Drivebase {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
     public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
