@@ -14,9 +14,6 @@ public class FlywheelIOSparkMax implements FlywheelIO {
   private final RelativeEncoder wheelOneEncoder;
   private final RelativeEncoder wheelTwoEncoder;
 
-  private double wheelOneAppliedVolts = 0.0;
-  private double wheelTwoAppliedVolts = 0.0;
-
   public FlywheelIOSparkMax() {
 
     wheelOneSparkMax.restoreFactoryDefaults();
@@ -58,13 +55,11 @@ public class FlywheelIOSparkMax implements FlywheelIO {
 
   @Override
   public void setWheelOneVoltage(double volts) {
-    wheelOneAppliedVolts = volts;
     wheelOneSparkMax.setVoltage(volts);
   }
 
   @Override
   public void setWheelTwoVoltage(double volts) {
-    wheelTwoAppliedVolts = volts;
     wheelTwoSparkMax.setVoltage(volts);
   }
 
@@ -74,11 +69,11 @@ public class FlywheelIOSparkMax implements FlywheelIO {
     inputs.wheelOneRadSec = wheelOneEncoder.getVelocity() * 0.25;
     inputs.wheelOnePositionRad = wheelOneEncoder.getPosition() * 0.25;
     inputs.wheelOneAppliedAmps = wheelOneSparkMax.getOutputCurrent();
-    inputs.wheelOneAppliedVolts = wheelOneSparkMax.getAppliedOutput();
+    inputs.wheelOneAppliedVolts = wheelOneSparkMax.getAppliedOutput() * wheelOneSparkMax.getBusVoltage();
 
     inputs.wheelTwoRadSec = wheelTwoEncoder.getVelocity() * 0.25;
     inputs.wheelTwoPositionRad = wheelTwoEncoder.getPosition() * 0.25;
     inputs.wheelTwoAppliedAmps = wheelTwoSparkMax.getOutputCurrent();
-    inputs.wheelTwoAppliedVolts = wheelTwoSparkMax.getAppliedOutput();
+    inputs.wheelTwoAppliedVolts = wheelTwoSparkMax.getAppliedOutput() * wheelTwoSparkMax.getBusVoltage();
   }
 }
