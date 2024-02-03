@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DefaultDrive;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
@@ -35,7 +36,9 @@ public class RobotContainer {
   public final FlywheelSubsystem flywheelSubsystem;
   public final DrivebaseSubsystem drivebaseSubsystem;
 
-  public XboxController controller = new XboxController(0);
+  public XboxController operatorController =
+      new XboxController(Constants.HID.operatorControlerPort);
+  public XboxController driverController = new XboxController(Constants.HID.driverControllerPort);
 
   public RobotContainer() {
     // Instantiate subsystems
@@ -87,7 +90,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
-    Trigger moais = new Trigger(controller::getAButton);
+    Trigger moais = new Trigger(operatorController::getAButton);
     moais.whileTrue(
         new RunCommand(
             () -> {
@@ -103,6 +106,12 @@ public class RobotContainer {
               flywheelSubsystem.setBothFlywheelSpeeds(0);
             },
             flywheelSubsystem));
+    drivebaseSubsystem.setDefaultCommand(
+        new DefaultDrive(
+            driverController::getLeftX,
+            driverController::getLeftY,
+            driverController::getRightX,
+            drivebaseSubsystem));
   }
 
   /**
