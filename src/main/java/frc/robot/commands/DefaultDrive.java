@@ -39,15 +39,15 @@ public class DefaultDrive extends Command {
         new ChassisSpeeds(
             (MathUtil.applyDeadband(directionX.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_LINEAR_SPEED)
-                / scalar.getAsDouble()
+                * (scalar.getAsDouble() - 1)
                 * -1,
             (MathUtil.applyDeadband(directionY.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_LINEAR_SPEED)
-                / scalar.getAsDouble()
+                * (scalar.getAsDouble() - 1)
                 * -1,
             ((MathUtil.applyDeadband(rotation.getAsDouble(), 0.1)
                         * Constants.Drivebase.MAX_ANGULAR_SPEED)
-                    / scalar.getAsDouble())
+                    * (scalar.getAsDouble() - 1))
                 * Constants.HID.thetaJoystickScalar
                 * -1),
         feildOriented.get());
