@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -81,11 +80,7 @@ public class RobotContainer {
     configureDefaultCommands();
     configureBindings();
 
-    if (Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)) {
-      autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    } else {
-      autoChooser = null;
-    }
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
   }
 
   private void configureBindings() {
@@ -121,8 +116,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Preferences.getBoolean("Drive/usePathPlanner", Constants.Flags.USEPATHPLANNER)
-        ? autoChooser.get()
-        : null;
+    return autoChooser.get();
   }
 }
