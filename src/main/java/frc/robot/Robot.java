@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.VirtualSubsystem;
@@ -36,6 +38,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   public static boolean isReplay = false;
+  public static Pose2d startingPosition = new Pose2d(2.0, 7.0, new Rotation2d());
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
