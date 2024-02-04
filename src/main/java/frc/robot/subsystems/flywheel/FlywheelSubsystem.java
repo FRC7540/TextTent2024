@@ -110,7 +110,9 @@ public class FlywheelSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     flywheelIO.updateInputs(flywheelInputs);
-    Logger.processInputs("Flywheel", flywheelInputs);
+    Logger.processInputs("Shooter/Flywheel", flywheelInputs);
+    shooterIO.updateInputs(shooterInputs);
+    Logger.processInputs("Shooter/Main", flywheelInputs);
 
     if (targetSpeed != 0.0) {
       wheelOneloop.setNextR(VecBuilder.fill(targetSpeed));
