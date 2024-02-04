@@ -180,6 +180,14 @@ public class DrivebaseSubsystem extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
   }
 
+  public void drivejoysticks(ChassisSpeeds speeds, boolean isfeildoriented) {
+    if (isfeildoriented) {
+      runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation));
+    } else {
+      runVelocity(speeds);
+    }
+  }
+
   /** Stops the drive. */
   public void stop() {
     runVelocity(new ChassisSpeeds());
