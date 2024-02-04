@@ -111,6 +111,7 @@ public class RobotContainer {
             driverController::getLeftY,
             driverController::getLeftX,
             driverController::getRightX,
+            driverController::getLeftTriggerAxis,
             drivebaseSubsystem));
   }
 

@@ -41,6 +41,7 @@ public final class Constants {
   public static final class HID {
     public static final int operatorControlerPort = 1;
     public static final int driverControllerPort = 0;
+    public static final double thetaJoystickScalar = 1;
   }
 
   public static final class Drivebase {
