@@ -21,6 +21,7 @@ import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.flywheel.FlywheelSubsystem;
+import frc.robot.subsystems.flywheel.ShooterIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -46,7 +47,7 @@ public class RobotContainer {
     if (Robot.isSimulation() && !Robot.isReplay) {
       // We are in a simulation, instantiate simulation classes
       System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim());
+      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim(), new ShooterIO() {});
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
@@ -57,7 +58,7 @@ public class RobotContainer {
     } else if (Robot.isReal()) {
       // We are on a real robot, instantiate hardware classes
       System.out.println("Real robot detected! Instantiating subsystems.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax());
+      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {});
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIONavX(),
@@ -66,9 +67,10 @@ public class RobotContainer {
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
     } else {
-      // Fill evrythign else, we are pribally in a replay!
+      // Fill evrythign else, we are probally in a replay!
       System.out.println("We must be in a replay! Instantiating bare I/O layers.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIO() {});
+      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
