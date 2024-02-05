@@ -55,10 +55,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(
-          kinematics,
-          rawGyroRotation,
-          lastModulePositions,
-          Robot.startingPosition);
+          kinematics, rawGyroRotation, lastModulePositions, Robot.startingPosition);
 
   public DrivebaseSubsystem(
       GyroIO gyroIO,
