@@ -19,8 +19,10 @@ import org.littletonrobotics.junction.Logger;
 
 public class FlywheelSubsystem extends SubsystemBase {
 
-  private final FlywheelIO io;
-  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+  private final FlywheelIO flywheelIO;
+  private final FlywheelIOInputsAutoLogged flywheelInputs = new FlywheelIOInputsAutoLogged();
+  private final ShooterIO shooterIO;
+  private final ShooterIOInputsAutoLogged shooterInputs = new ShooterIOInputsAutoLogged();
 
   @AutoLogOutput(key = "Flywheel/TargetSpeeds")
   private double targetSpeed = 0.0;
@@ -87,8 +89,9 @@ public class FlywheelSubsystem extends SubsystemBase {
           Constants.Flywheel.WheelTwo.MAX_VOLTAGE,
           Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
-  public FlywheelSubsystem(FlywheelIO io) {
-    this.io = io;
+  public FlywheelSubsystem(FlywheelIO flywheelIO, ShooterIO shooterIO) {
+    this.flywheelIO = flywheelIO;
+    this.shooterIO = shooterIO;
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -106,8 +109,10 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Flywheel", inputs);
+    flywheelIO.updateInputs(flywheelInputs);
+    Logger.processInputs("Shooter/Flywheel", flywheelInputs);
+    shooterIO.updateInputs(shooterInputs);
+    Logger.processInputs("Shooter/Main", flywheelInputs);
 
     if (targetSpeed != 0.0) {
       wheelOneloop.setNextR(VecBuilder.fill(targetSpeed));
@@ -117,8 +122,8 @@ public class FlywheelSubsystem extends SubsystemBase {
       wheelTwoloop.setNextR(VecBuilder.fill(0.0));
     }
 
-    wheelOneloop.correct(VecBuilder.fill(inputs.wheelOneRadSec));
-    wheelTwoloop.correct(VecBuilder.fill(inputs.wheelTwoRadSec));
+    wheelOneloop.correct(VecBuilder.fill(flywheelInputs.wheelOneRadSec));
+    wheelTwoloop.correct(VecBuilder.fill(flywheelInputs.wheelTwoRadSec));
     wheelOneController.latencyCompensate(
         wheelOneFlywheelPlant, Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
     wheelTwoController.latencyCompensate(
@@ -127,8 +132,8 @@ public class FlywheelSubsystem extends SubsystemBase {
     wheelOneloop.predict(Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
     wheelTwoloop.predict(Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
-    io.setWheelOneVoltage(wheelOneloop.getU(0));
-    io.setWheelTwoVoltage(wheelTwoloop.getU(0));
+    flywheelIO.setWheelOneVoltage(wheelOneloop.getU(0));
+    flywheelIO.setWheelTwoVoltage(wheelTwoloop.getU(0));
   }
 
   @Override
@@ -139,8 +144,8 @@ public class FlywheelSubsystem extends SubsystemBase {
   }
 
   private void setBothWheelVoltage(double volts) {
-    io.setWheelOneVoltage(volts);
-    io.setWheelTwoVoltage(volts);
+    flywheelIO.setWheelOneVoltage(volts);
+    flywheelIO.setWheelTwoVoltage(volts);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -156,7 +161,7 @@ public class FlywheelSubsystem extends SubsystemBase {
   public void stop() {
     wheelOneloop.setNextR(VecBuilder.fill(0.0));
     wheelTwoloop.setNextR(VecBuilder.fill(0.0));
-    io.setWheelOneVoltage(0.0);
-    io.setWheelTwoVoltage(0.0);
+    flywheelIO.setWheelOneVoltage(0.0);
+    flywheelIO.setWheelTwoVoltage(0.0);
   }
 }
