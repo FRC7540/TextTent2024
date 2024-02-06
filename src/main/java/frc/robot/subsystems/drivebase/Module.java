@@ -62,8 +62,8 @@ public class Module {
       default:
         // If we are not simulating we must be on a real robot.
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
-        driveFeedback = new PIDController(0.0, 0.0, 0.0);
-        turnFeedback = new PIDController(0.0, 0.0, 0.0);
+        driveFeedback = new PIDController(0.04, 0.0, 0.0);
+        turnFeedback = new PIDController(1.0, 0.0, 0.0);
         break;
     }
 
@@ -77,6 +77,7 @@ public class Module {
           .add("turnFeedback/" + index, this.turnFeedback)
           .withWidget(BuiltInWidgets.kPIDController);
     }
+
     turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
     setBrakeMode(true);
   }
