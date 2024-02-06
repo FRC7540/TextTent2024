@@ -78,7 +78,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     driveEncoder.setPositionConversionFactor((0.0762 * Math.PI));
     driveEncoder.setVelocityConversionFactor(
-        ((0.0762 * Math.PI) / ((45.0 * 22) / (14 * 15))) / 60.0);
+        ((0.0762 * Math.PI) / ((45.0 * 22) / (Constants.Drivebase.DRIVE_PINON * 15))) / 60.0);
 
     driveSparkMax.setSmartCurrentLimit(40);
     turnSparkMax.setSmartCurrentLimit(25);

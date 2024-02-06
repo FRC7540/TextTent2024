@@ -52,8 +52,9 @@ public final class Constants {
     public static final double DRIVE_BASE_RADIUS =
         Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
     public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
-    public static final double TURN_GEAR_RATIO = 4;
-    public static final double DRIVE_GEAR_RATIO = 4;
+    public static final double TURN_GEAR_RATIO = 46.42;
+    public static final double DRIVE_GEAR_RATIO = 5.08;
+    public static final double DRIVE_PINON = 13;
     public static final double DRIVE_MOMENT_INERTIA = 0.025;
     public static final double TURN_MOMENT_INERTIA = 0.004;
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
