@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ModuleIOSparkMax implements ModuleIO {
@@ -68,18 +67,31 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnRelativeEncoder = turnSparkMax.getEncoder();
     turnAbsoluteEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
 
+    turnAbsoluteEncoder.setInverted(true);
+    turnRelativeEncoder.setInverted(true);
+
+    turnAbsoluteEncoder.setPositionConversionFactor(2 * Math.PI);
+    turnAbsoluteEncoder.setVelocityConversionFactor((2 * Math.PI) / 60.0);
+
+    turnRelativeEncoder.setPositionConversionFactor(2 * Math.PI);
+    turnRelativeEncoder.setVelocityConversionFactor((2 * Math.PI) / 60.0);
+
+    driveEncoder.setPositionConversionFactor((0.0762 * Math.PI));
+    driveEncoder.setVelocityConversionFactor(
+        ((0.0762 * Math.PI) / ((45.0 * 22) / (14 * 15))) / 60.0);
+
     driveSparkMax.setSmartCurrentLimit(40);
-    turnSparkMax.setSmartCurrentLimit(30);
+    turnSparkMax.setSmartCurrentLimit(25);
     driveSparkMax.enableVoltageCompensation(12.0);
     turnSparkMax.enableVoltageCompensation(12.0);
 
     driveEncoder.setPosition(0.0);
     driveEncoder.setMeasurementPeriod(10);
-    driveEncoder.setAverageDepth(2);
+    driveEncoder.setAverageDepth(8);
 
     turnRelativeEncoder.setPosition(0.0);
     turnRelativeEncoder.setMeasurementPeriod(10);
-    turnRelativeEncoder.setAverageDepth(2);
+    turnRelativeEncoder.setAverageDepth(8);
 
     driveSparkMax.setCANTimeout(0);
     turnSparkMax.setCANTimeout(0);
@@ -90,22 +102,15 @@ public class ModuleIOSparkMax implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionRad =
-        Units.rotationsToRadians(driveEncoder.getPosition()) / Constants.Drivebase.DRIVE_GEAR_RATIO;
-    inputs.driveVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(driveEncoder.getVelocity())
-            / Constants.Drivebase.DRIVE_GEAR_RATIO;
+    inputs.drivePositionRad = driveEncoder.getPosition();
+    inputs.driveVelocityRadPerSec = driveEncoder.getVelocity();
     inputs.driveAppliedVolts = driveSparkMax.getAppliedOutput() * driveSparkMax.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveSparkMax.getOutputCurrent()};
 
-    inputs.turnAbsolutePosition =
-        new Rotation2d(turnAbsoluteEncoder.getPosition()).minus(absoluteEncoderOffset);
-    inputs.turnPosition =
-        Rotation2d.fromRotations(
-            turnRelativeEncoder.getPosition() / Constants.Drivebase.TURN_GEAR_RATIO);
-    inputs.turnVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(turnRelativeEncoder.getVelocity())
-            / Constants.Drivebase.TURN_GEAR_RATIO;
+    inputs.turnAbsolutePosition = new Rotation2d(turnAbsoluteEncoder.getPosition());
+    inputs.turnPosition = new Rotation2d(turnRelativeEncoder.getPosition());
+
+    inputs.turnVelocityRadPerSec = turnRelativeEncoder.getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnSparkMax.getOutputCurrent()};
   }
