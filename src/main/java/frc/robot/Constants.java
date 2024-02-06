@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -132,5 +133,11 @@ public final class Constants {
       public static final boolean INVERTED = false;
       public static final double MAX_VOLTAGE = 12.0; // Volts
     }
+  }
+
+  public static final class Intake {
+    public static final int MOTOR_ONE_CAN_ID = 14;
+    public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
+    public static final boolean MOTOR_ONE_INVERTED = false;
   }
 }
