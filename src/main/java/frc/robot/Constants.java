@@ -60,29 +60,29 @@ public final class Constants {
 
     public static final class Mod0 {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
-      public static final int DRIVE_SPARKMAX_CAN_ID = 12;
-      public static final int TURN_SPARKMAX_CAN_ID = 13;
+      public static final int DRIVE_SPARKMAX_CAN_ID = 23;
+      public static final int TURN_SPARKMAX_CAN_ID = 22;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class Mod1 {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
-      public static final int DRIVE_SPARKMAX_CAN_ID = 14;
-      public static final int TURN_SPARKMAX_CAN_ID = 15;
+      public static final int DRIVE_SPARKMAX_CAN_ID = 21;
+      public static final int TURN_SPARKMAX_CAN_ID = 20;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class Mod2 {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
-      public static final int DRIVE_SPARKMAX_CAN_ID = 16;
-      public static final int TURN_SPARKMAX_CAN_ID = 17;
+      public static final int DRIVE_SPARKMAX_CAN_ID = 27;
+      public static final int TURN_SPARKMAX_CAN_ID = 26;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class Mod3 {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
-      public static final int DRIVE_SPARKMAX_CAN_ID = 18;
-      public static final int TURN_SPARKMAX_CAN_ID = 19;
+      public static final int DRIVE_SPARKMAX_CAN_ID = 25;
+      public static final int TURN_SPARKMAX_CAN_ID = 24;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
