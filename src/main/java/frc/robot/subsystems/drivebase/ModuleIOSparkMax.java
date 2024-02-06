@@ -76,9 +76,11 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnRelativeEncoder.setPositionConversionFactor(2 * Math.PI);
     turnRelativeEncoder.setVelocityConversionFactor((2 * Math.PI) / 60.0);
 
-    driveEncoder.setPositionConversionFactor((0.0762 * Math.PI));
+    driveEncoder.setPositionConversionFactor(
+        (Constants.Drivebase.WHEEL_DIAMETER * Math.PI) / Constants.Drivebase.DRIVE_GEAR_RATIO);
     driveEncoder.setVelocityConversionFactor(
-        ((0.0762 * Math.PI) / ((45.0 * 22) / (Constants.Drivebase.DRIVE_PINON * 15))) / 60.0);
+        ((Constants.Drivebase.WHEEL_DIAMETER * Math.PI) / Constants.Drivebase.DRIVE_GEAR_RATIO)
+            / 60.0);
 
     driveSparkMax.setSmartCurrentLimit(40);
     turnSparkMax.setSmartCurrentLimit(25);
@@ -107,7 +109,8 @@ public class ModuleIOSparkMax implements ModuleIO {
     inputs.driveAppliedVolts = driveSparkMax.getAppliedOutput() * driveSparkMax.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveSparkMax.getOutputCurrent()};
 
-    inputs.turnAbsolutePosition = new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
+    inputs.turnAbsolutePosition =
+        new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
     inputs.turnPosition = new Rotation2d(turnRelativeEncoder.getPosition());
 
     inputs.turnVelocityRadPerSec = turnRelativeEncoder.getVelocity();
