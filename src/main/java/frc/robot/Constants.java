@@ -60,28 +60,28 @@ public final class Constants {
     public static final double TURN_MOMENT_INERTIA = 0.004;
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
 
-    public static final class Mod0 {
+    public static final class ModFL {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
       public static final int DRIVE_SPARKMAX_CAN_ID = 23;
       public static final int TURN_SPARKMAX_CAN_ID = 22;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
-    public static final class Mod1 {
+    public static final class ModFR {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
       public static final int DRIVE_SPARKMAX_CAN_ID = 21;
       public static final int TURN_SPARKMAX_CAN_ID = 20;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
-    public static final class Mod2 {
+    public static final class ModBL {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
       public static final int DRIVE_SPARKMAX_CAN_ID = 27;
       public static final int TURN_SPARKMAX_CAN_ID = 26;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
-    public static final class Mod3 {
+    public static final class ModBR {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
       public static final int DRIVE_SPARKMAX_CAN_ID = 25;
       public static final int TURN_SPARKMAX_CAN_ID = 24;
