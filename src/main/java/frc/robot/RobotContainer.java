@@ -16,11 +16,11 @@ import frc.robot.subsystems.drivebase.GyroIONavX;
 import frc.robot.subsystems.drivebase.ModuleIO;
 import frc.robot.subsystems.drivebase.ModuleIOSim;
 import frc.robot.subsystems.drivebase.ModuleIOSparkMax;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
-import frc.robot.subsystems.flywheel.FlywheelSubsystem;
-import frc.robot.subsystems.flywheel.ShooterIO;
+import frc.robot.subsystems.shooter.FlywheelIO;
+import frc.robot.subsystems.shooter.FlywheelIOSim;
+import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -33,7 +33,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
-  public final FlywheelSubsystem flywheelSubsystem;
+  public final ShooterSubsystem flywheelSubsystem;
   public final DrivebaseSubsystem drivebaseSubsystem;
 
   public XboxController operatorController =
@@ -46,7 +46,7 @@ public class RobotContainer {
     if (Robot.isSimulation() && !Robot.isReplay) {
       // We are in a simulation, instantiate simulation classes
       System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSim(), new ShooterIO() {});
+      flywheelSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIO() {});
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
@@ -57,7 +57,7 @@ public class RobotContainer {
     } else if (Robot.isReal()) {
       // We are on a real robot, instantiate hardware classes
       System.out.println("Real robot detected! Instantiating subsystems.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {});
+      flywheelSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {});
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIONavX(),
@@ -68,7 +68,7 @@ public class RobotContainer {
     } else {
       // Fill evrythign else, we are probally in a replay!
       System.out.println("We must be in a replay! Instantiating bare I/O layers.");
-      flywheelSubsystem = new FlywheelSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+      flywheelSubsystem = new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
 
       drivebaseSubsystem =
           new DrivebaseSubsystem(

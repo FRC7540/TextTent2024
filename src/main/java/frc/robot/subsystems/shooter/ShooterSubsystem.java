@@ -1,4 +1,4 @@
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
@@ -13,11 +13,11 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
+import frc.robot.Constants.Shooter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class FlywheelSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
   private final FlywheelIO flywheelIO;
   private final FlywheelIOInputsAutoLogged flywheelInputs = new FlywheelIOInputsAutoLogged();
@@ -31,65 +31,65 @@ public class FlywheelSubsystem extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> wheelOneFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNeo550(Constants.Flywheel.WheelOne.MOTOR_COUNT),
-          Constants.Flywheel.WheelOne.MOMENT_OF_INERTIA,
-          Constants.Flywheel.WheelOne.GEAR_RATIO);
+          DCMotor.getNeo550(Shooter.Flywheel.WheelOne.MOTOR_COUNT),
+          Shooter.Flywheel.WheelOne.MOMENT_OF_INERTIA,
+          Shooter.Flywheel.WheelOne.GEAR_RATIO);
 
   private final KalmanFilter<N1, N1, N1> wheelOneObserver =
       new KalmanFilter<>(
           Nat.N1(),
           Nat.N1(),
           wheelOneFlywheelPlant,
-          Constants.Flywheel.WheelOne.MODEL_STD_DEV,
-          Constants.Flywheel.WheelOne.MEASUREMENT_STD_DEV,
-          Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelOne.MODEL_STD_DEV,
+          Shooter.Flywheel.WheelOne.MEASUREMENT_STD_DEV,
+          Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearQuadraticRegulator<N1, N1, N1> wheelOneController =
       new LinearQuadraticRegulator<>(
           wheelOneFlywheelPlant,
-          Constants.Flywheel.WheelOne.QELMS,
-          Constants.Flywheel.WheelOne.RELMS,
-          Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelOne.QELMS,
+          Shooter.Flywheel.WheelOne.RELMS,
+          Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearSystemLoop<N1, N1, N1> wheelOneloop =
       new LinearSystemLoop<>(
           wheelOneFlywheelPlant,
           wheelOneController,
           wheelOneObserver,
-          Constants.Flywheel.WheelOne.MAX_VOLTAGE,
-          Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelOne.MAX_VOLTAGE,
+          Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearSystem<N1, N1, N1> wheelTwoFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNeo550(Constants.Flywheel.WheelTwo.MOTOR_COUNT),
-          Constants.Flywheel.WheelTwo.MOMENT_OF_INERTIA,
-          Constants.Flywheel.WheelTwo.GEAR_RATIO);
+          DCMotor.getNeo550(Shooter.Flywheel.WheelTwo.MOTOR_COUNT),
+          Shooter.Flywheel.WheelTwo.MOMENT_OF_INERTIA,
+          Shooter.Flywheel.WheelTwo.GEAR_RATIO);
 
   private final KalmanFilter<N1, N1, N1> wheelTwoObserver =
       new KalmanFilter<>(
           Nat.N1(),
           Nat.N1(),
           wheelTwoFlywheelPlant,
-          Constants.Flywheel.WheelTwo.MODEL_STD_DEV,
-          Constants.Flywheel.WheelTwo.MEASUREMENT_STD_DEV,
-          Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelTwo.MODEL_STD_DEV,
+          Shooter.Flywheel.WheelTwo.MEASUREMENT_STD_DEV,
+          Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearQuadraticRegulator<N1, N1, N1> wheelTwoController =
       new LinearQuadraticRegulator<>(
           wheelTwoFlywheelPlant,
-          Constants.Flywheel.WheelTwo.QELMS,
-          Constants.Flywheel.WheelTwo.RELMS,
-          Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelTwo.QELMS,
+          Shooter.Flywheel.WheelTwo.RELMS,
+          Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearSystemLoop<N1, N1, N1> wheelTwoloop =
       new LinearSystemLoop<>(
           wheelTwoFlywheelPlant,
           wheelTwoController,
           wheelTwoObserver,
-          Constants.Flywheel.WheelTwo.MAX_VOLTAGE,
-          Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
+          Shooter.Flywheel.WheelTwo.MAX_VOLTAGE,
+          Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
-  public FlywheelSubsystem(FlywheelIO flywheelIO, ShooterIO shooterIO) {
+  public ShooterSubsystem(FlywheelIO flywheelIO, ShooterIO shooterIO) {
     this.flywheelIO = flywheelIO;
     this.shooterIO = shooterIO;
     sysId =
@@ -125,12 +125,12 @@ public class FlywheelSubsystem extends SubsystemBase {
     wheelOneloop.correct(VecBuilder.fill(flywheelInputs.wheelOneRadSec));
     wheelTwoloop.correct(VecBuilder.fill(flywheelInputs.wheelTwoRadSec));
     wheelOneController.latencyCompensate(
-        wheelOneFlywheelPlant, Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
+        wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
     wheelTwoController.latencyCompensate(
-        wheelTwoFlywheelPlant, Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
+        wheelTwoFlywheelPlant, Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
 
-    wheelOneloop.predict(Constants.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
-    wheelTwoloop.predict(Constants.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
+    wheelOneloop.predict(Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
+    wheelTwoloop.predict(Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
     flywheelIO.setWheelOneVoltage(wheelOneloop.getU(0));
     flywheelIO.setWheelTwoVoltage(wheelTwoloop.getU(0));

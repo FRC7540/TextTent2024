@@ -97,41 +97,47 @@ public final class Constants {
     }; // FL, FR, BL, BR
   }
 
-  public static final class Flywheel {
-    public static final int MOTOR_ONE_CAN_ID = 10;
-    public static final int MOTOR_TWO_CAN_ID = 11;
-    public static final double SIM_UPDATE_TIME = 0.02;
+  public static final class Shooter {
+    public static final int SHOOTER_MOTOR_ONE_CAN_ID = 16;
+    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
+    public static final boolean MOTOR_ONE_INVERTED = false;
 
-    // qelms. Velocity error tolerance, in radians per second. Decrease
-    // this to more heavily penalize state excursion, or make the controller behave more
-    // aggressively.
-    // relms. Control effort (voltage) tolerance. Decrease this to more
-    // heavily penalize control effort, or make the controller less aggressive. 12 is a good
-    // starting point because that is the (approximate) maximum voltage of a battery.
-    public static final class WheelOne {
-      public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
-      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
-      public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
-      public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
-      public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-      public static final double MOMENT_OF_INERTIA = 0.0005;
-      public static final int MOTOR_COUNT = 1;
-      public static final double GEAR_RATIO = 4.0;
-      public static final boolean INVERTED = true;
-      public static final double MAX_VOLTAGE = 12.0; // Volts
-    }
+    public static final class Flywheel {
+      public static final int MOTOR_ONE_CAN_ID = 10;
+      public static final int MOTOR_TWO_CAN_ID = 11;
+      public static final double SIM_UPDATE_TIME = 0.02;
 
-    public static final class WheelTwo {
-      public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
-      public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
-      public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
-      public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
-      public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-      public static final double MOMENT_OF_INERTIA = 0.0005;
-      public static final int MOTOR_COUNT = 1;
-      public static final double GEAR_RATIO = 4.0;
-      public static final boolean INVERTED = false;
-      public static final double MAX_VOLTAGE = 12.0; // Volts
+      // qelms. Velocity error tolerance, in radians per second. Decrease
+      // this to more heavily penalize state excursion, or make the controller behave more
+      // aggressively.
+      // relms. Control effort (voltage) tolerance. Decrease this to more
+      // heavily penalize control effort, or make the controller less aggressive. 12 is a good
+      // starting point because that is the (approximate) maximum voltage of a battery.
+      public static final class WheelOne {
+        public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
+        public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
+        public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
+        public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
+        public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
+        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final int MOTOR_COUNT = 1;
+        public static final double GEAR_RATIO = 4.0;
+        public static final boolean INVERTED = true;
+        public static final double MAX_VOLTAGE = 12.0; // Volts
+      }
+
+      public static final class WheelTwo {
+        public static final Matrix<N1, N1> MODEL_STD_DEV = VecBuilder.fill(3.0);
+        public static final Matrix<N1, N1> MEASUREMENT_STD_DEV = VecBuilder.fill(0.01);
+        public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
+        public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
+        public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
+        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final int MOTOR_COUNT = 1;
+        public static final double GEAR_RATIO = 4.0;
+        public static final boolean INVERTED = false;
+        public static final double MAX_VOLTAGE = 12.0; // Volts
+      }
     }
   }
 
