@@ -1,15 +1,15 @@
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.shooter;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import frc.robot.Constants;
+import frc.robot.Constants.Shooter;
 
 public class FlywheelIOSparkMax implements FlywheelIO {
   private final CANSparkMax wheelOneSparkMax =
-      new CANSparkMax(Constants.Flywheel.MOTOR_ONE_CAN_ID, MotorType.kBrushless);
+      new CANSparkMax(Shooter.Flywheel.MOTOR_ONE_CAN_ID, MotorType.kBrushless);
   private final CANSparkMax wheelTwoSparkMax =
-      new CANSparkMax(Constants.Flywheel.MOTOR_TWO_CAN_ID, MotorType.kBrushless);
+      new CANSparkMax(Shooter.Flywheel.MOTOR_TWO_CAN_ID, MotorType.kBrushless);
 
   private final RelativeEncoder wheelOneEncoder;
   private final RelativeEncoder wheelTwoEncoder;
@@ -25,8 +25,8 @@ public class FlywheelIOSparkMax implements FlywheelIO {
     wheelOneEncoder = wheelOneSparkMax.getEncoder();
     wheelTwoEncoder = wheelTwoSparkMax.getEncoder();
 
-    wheelOneSparkMax.setInverted(Constants.Flywheel.WheelOne.INVERTED);
-    wheelTwoSparkMax.setInverted(Constants.Flywheel.WheelTwo.INVERTED);
+    wheelOneSparkMax.setInverted(Shooter.Flywheel.WheelOne.INVERTED);
+    wheelTwoSparkMax.setInverted(Shooter.Flywheel.WheelTwo.INVERTED);
     wheelOneSparkMax.setSmartCurrentLimit(20);
     wheelTwoSparkMax.setSmartCurrentLimit(20);
     wheelOneSparkMax.enableVoltageCompensation(12.0);

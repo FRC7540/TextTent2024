@@ -1,28 +1,28 @@
-package frc.robot.subsystems.flywheel;
+package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import frc.robot.Constants;
+import frc.robot.Constants.Shooter;
 
 public class FlywheelIOSim implements FlywheelIO {
   private FlywheelSim wheelOneSim =
       new FlywheelSim(
-          DCMotor.getNEO(Constants.Flywheel.WheelOne.MOTOR_COUNT),
-          Constants.Flywheel.WheelOne.GEAR_RATIO,
-          Constants.Flywheel.WheelOne.MOMENT_OF_INERTIA);
+          DCMotor.getNEO(Shooter.Flywheel.WheelOne.MOTOR_COUNT),
+          Shooter.Flywheel.WheelOne.GEAR_RATIO,
+          Shooter.Flywheel.WheelOne.MOMENT_OF_INERTIA);
   private FlywheelSim wheelTwoSim =
       new FlywheelSim(
-          DCMotor.getNEO(Constants.Flywheel.WheelTwo.MOTOR_COUNT),
-          Constants.Flywheel.WheelTwo.GEAR_RATIO,
-          Constants.Flywheel.WheelTwo.MOMENT_OF_INERTIA);
+          DCMotor.getNEO(Shooter.Flywheel.WheelTwo.MOTOR_COUNT),
+          Shooter.Flywheel.WheelTwo.GEAR_RATIO,
+          Shooter.Flywheel.WheelTwo.MOMENT_OF_INERTIA);
 
   private double motorOneAppliedVolts = 0.0;
   private double motorTwoAppliedVolts = 0.0;
 
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
-    wheelOneSim.update(Constants.Flywheel.SIM_UPDATE_TIME);
-    wheelTwoSim.update(Constants.Flywheel.SIM_UPDATE_TIME);
+    wheelOneSim.update(Shooter.Flywheel.SIM_UPDATE_TIME);
+    wheelTwoSim.update(Shooter.Flywheel.SIM_UPDATE_TIME);
 
     inputs.wheelOneRadSec = wheelOneSim.getAngularVelocityRadPerSec();
     inputs.wheelOnePositionRad = 0.0;
