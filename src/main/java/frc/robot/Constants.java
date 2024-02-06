@@ -46,7 +46,7 @@ public final class Constants {
 
   public static final class Drivebase {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
-    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
+    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.63);
     public static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
     public static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
     public static final double DRIVE_BASE_RADIUS =
