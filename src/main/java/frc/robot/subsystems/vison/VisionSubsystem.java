@@ -9,6 +9,7 @@ public class VisionSubsystem extends VirtualSubsystem {
 
   private final VisionIO limelightIO;
   private final VisionIOInputsAutoLogged limelightInputs = new VisionIOInputsAutoLogged();
+  private double lastTimestamp = 0;
 
   private ArrayList<PoseConsumer> botPoseConsumers = new ArrayList<PoseConsumer>();
   private ArrayList<PoseConsumer> targetConsumers = new ArrayList<PoseConsumer>();
@@ -22,12 +23,15 @@ public class VisionSubsystem extends VirtualSubsystem {
     limelightIO.updateInputs(limelightInputs);
     Logger.processInputs("Vision/Limelight", limelightInputs);
 
-    for (PoseConsumer poseConsumer : botPoseConsumers) {
-      poseConsumer.accept(limelightInputs.selfPoseFieldSpace, limelightInputs.captureTimestamp);
-    }
+    if (limelightInputs.captureTimestamp != lastTimestamp) {
+      lastTimestamp = limelightInputs.captureTimestamp;
+      for (PoseConsumer poseConsumer : botPoseConsumers) {
+        poseConsumer.accept(limelightInputs.selfPoseFieldSpace, limelightInputs.captureTimestamp);
+      }
 
-    for (PoseConsumer poseConsumer : targetConsumers) {
-      poseConsumer.accept(limelightInputs.targetPoseRobotSpace, limelightInputs.captureTimestamp);
+      for (PoseConsumer poseConsumer : targetConsumers) {
+        poseConsumer.accept(limelightInputs.targetPoseRobotSpace, limelightInputs.captureTimestamp);
+      }
     }
   }
 
