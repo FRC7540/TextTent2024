@@ -36,7 +36,8 @@ public final class Constants {
   // WARNING: THIS CLASS IS REFLECTED! DO NOT PUT ANYTHING BUT BOOLEANS!
   // The varible name will be the name of the prefrence key.
   public static final class Flags {
-    public static final boolean USEPATHPLANNER = true;
+    public static final boolean USE_PATH_PLANNER = true;
+    public static final boolean USE_REAL_FLYWHEEL_HARDWARE = false;
   }
 
   public static final class HID {

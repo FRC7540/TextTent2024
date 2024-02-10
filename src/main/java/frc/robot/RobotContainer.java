@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -57,7 +58,13 @@ public class RobotContainer {
     } else if (Robot.isReal()) {
       // We are on a real robot, instantiate hardware classes
       System.out.println("Real robot detected! Instantiating subsystems.");
-      flywheelSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {});
+
+      // Only create the real IO layer if we need to
+      flywheelSubsystem =
+          Preferences.getBoolean("flywheelReal", Constants.Flags.USE_REAL_FLYWHEEL_HARDWARE)
+              ? new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {})
+              : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIONavX(),
@@ -66,7 +73,7 @@ public class RobotContainer {
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
     } else {
-      // Fill evrythign else, we are probally in a replay!
+      // Fill everything else, we are probally in a replay!
       System.out.println("We must be in a replay! Instantiating bare I/O layers.");
       flywheelSubsystem = new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
 
@@ -111,6 +118,8 @@ public class RobotContainer {
             driverController::getLeftTriggerAxis,
             drivebaseSubsystem));
   }
+
+  public void initPathPlanner() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
