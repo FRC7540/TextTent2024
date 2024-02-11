@@ -25,6 +25,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private final ShooterIO shooterIO;
   private final ShooterIOInputsAutoLogged shooterInputs = new ShooterIOInputsAutoLogged();
 
+  public static double optimalRotationSpeed = 100;
+
   @AutoLogOutput(key = "Flywheel/TargetSpeeds")
   private double targetSpeed = 0.0;
 
@@ -113,7 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelIO.updateInputs(flywheelInputs);
     Logger.processInputs("Shooter/Flywheel", flywheelInputs);
     shooterIO.updateInputs(shooterInputs);
-    Logger.processInputs("Shooter/Main", flywheelInputs);
+    Logger.processInputs("Shooter/Main", shooterInputs);
 
     if (targetSpeed != 0.0) {
       wheelOneloop.setNextR(VecBuilder.fill(targetSpeed));

@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import java.util.function.DoubleSupplier;
 
-public class FlywheelSpinUpToTargetVelocity extends Command {
+public class FlywheelSpinToTargetVelocity extends Command {
   private final ShooterSubsystem shooterSubsystem;
   private final DoubleSupplier goal;
 
-  public FlywheelSpinUpToTargetVelocity(ShooterSubsystem shooterSubsystem, DoubleSupplier goal) {
+  public FlywheelSpinToTargetVelocity(ShooterSubsystem shooterSubsystem, DoubleSupplier goal) {
     this.shooterSubsystem = shooterSubsystem;
     this.goal = goal;
     addRequirements(shooterSubsystem);

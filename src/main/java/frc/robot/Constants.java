@@ -20,6 +20,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -99,9 +100,30 @@ public final class Constants {
   }
 
   public static final class Shooter {
-    public static final int SHOOTER_MOTOR_ONE_CAN_ID = 16;
+    public static final double NOMINAL_LOOP_PERIOD = 0.02;
+    public static final int PUSHER_MOTOR_CAN_ID = 16;
     public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
-    public static final boolean MOTOR_ONE_INVERTED = false;
+    public static final boolean PUSHER_MOTOR_INVERTED = false;
+
+    public static enum Direction {
+      FORWARD(6.0),
+      STOP(0.0),
+      BACK(-6.0);
+      private double voltage;
+
+      Direction(double voltage) {
+        this.voltage = voltage;
+      }
+
+      public double getVoltage() {
+        return voltage;
+      }
+    }
+
+    public static final double PUSHER_WAIT_TIME = 2.0;
+    public static final double PUSHER_MOMENT_OF_INTERTIA = 0.001;
+    public static final DCMotor PUSHER_MOTOR_TYPE = DCMotor.getNeo550(1);
+    public static final double PUSHER_MOTOR_GEART_RATIO = 1.0;
 
     public static final class Flywheel {
       public static final int MOTOR_ONE_CAN_ID = 10;
@@ -120,7 +142,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final double MOMENT_OF_INERTIA = 1.0005;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;
@@ -133,7 +155,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final double MOMENT_OF_INERTIA = 1.0005;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
