@@ -60,4 +60,8 @@ public class VisionSubsystem extends VirtualSubsystem {
   public void setVisionPipeline(IntSupplier pipeline) {
     limelightIO.setPipeline(pipeline.getAsInt());
   }
+
+  public int getCurrentVisionPipeline() {
+    return limelightInputs.currentPipeline;
+  }
 }
