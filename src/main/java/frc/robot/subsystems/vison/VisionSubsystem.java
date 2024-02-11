@@ -3,6 +3,7 @@ package frc.robot.subsystems.vison;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.util.VirtualSubsystem;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends VirtualSubsystem {
@@ -11,8 +12,10 @@ public class VisionSubsystem extends VirtualSubsystem {
   private final VisionIOInputsAutoLogged limelightInputs = new VisionIOInputsAutoLogged();
   private double lastTimestamp = 0;
 
-  private ArrayList<PoseConsumer> botPoseConsumers = new ArrayList<PoseConsumer>();
-  private ArrayList<PoseConsumer> targetConsumers = new ArrayList<PoseConsumer>();
+  private ArrayList<BiConsumer<Pose3d, Double>> botPoseConsumers =
+      new ArrayList<BiConsumer<Pose3d, Double>>();
+  private ArrayList<BiConsumer<Pose3d, Double>> targetConsumers =
+      new ArrayList<BiConsumer<Pose3d, Double>>();
 
   public VisionSubsystem(VisionIO visionio) {
     this.limelightIO = visionio;
@@ -25,34 +28,29 @@ public class VisionSubsystem extends VirtualSubsystem {
 
     if (limelightInputs.captureTimestamp != lastTimestamp) {
       lastTimestamp = limelightInputs.captureTimestamp;
-      for (PoseConsumer poseConsumer : botPoseConsumers) {
+      for (BiConsumer<Pose3d, Double> poseConsumer : botPoseConsumers) {
         poseConsumer.accept(limelightInputs.selfPoseFieldSpace, limelightInputs.captureTimestamp);
       }
 
-      for (PoseConsumer poseConsumer : targetConsumers) {
+      for (BiConsumer<Pose3d, Double> poseConsumer : targetConsumers) {
         poseConsumer.accept(limelightInputs.targetPoseRobotSpace, limelightInputs.captureTimestamp);
       }
     }
   }
 
-  @FunctionalInterface
-  public interface PoseConsumer {
-    void accept(Pose3d pose, double timestamp);
-  }
-
-  public void registerBotPoseConsumer(PoseConsumer poseConsumer) {
+  public void registerBotPoseConsumer(BiConsumer<Pose3d, Double> poseConsumer) {
     botPoseConsumers.add(poseConsumer);
   }
 
-  public void registerTargerPoseConsumer(PoseConsumer poseConsumer) {
+  public void registerTargerPoseConsumer(BiConsumer<Pose3d, Double> poseConsumer) {
     targetConsumers.add(poseConsumer);
   }
 
-  public void removeBotPoseConsumer(PoseConsumer poseConsumer) {
+  public void removeBotPoseConsumer(BiConsumer<Pose3d, Double> poseConsumer) {
     botPoseConsumers.remove(poseConsumer);
   }
 
-  public void removeTargerPoseConsumer(PoseConsumer poseConsumer) {
+  public void removeTargerPoseConsumer(BiConsumer<Pose3d, Double> poseConsumer) {
     targetConsumers.remove(poseConsumer);
   }
 }
