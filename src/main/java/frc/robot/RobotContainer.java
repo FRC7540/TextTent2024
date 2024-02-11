@@ -98,7 +98,7 @@ public class RobotContainer {
     moais.whileTrue(
         new RunCommand(
             () -> {
-              flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
+              flywheelSubsystem.setFlywheelSpeeds(moai.get());
             },
             flywheelSubsystem));
   }
@@ -107,7 +107,7 @@ public class RobotContainer {
     flywheelSubsystem.setDefaultCommand(
         new RunCommand(
             () -> {
-              flywheelSubsystem.setBothFlywheelSpeeds(0);
+              flywheelSubsystem.setFlywheelSpeeds(0);
             },
             flywheelSubsystem));
     drivebaseSubsystem.setDefaultCommand(

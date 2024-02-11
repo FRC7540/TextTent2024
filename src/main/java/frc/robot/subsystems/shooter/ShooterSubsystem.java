@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Shooter;
+import java.util.function.DoublePredicate;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -139,7 +140,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {}
 
-  public void setBothFlywheelSpeeds(double speed) {
+  public void setFlywheelSpeeds(double speed) {
     targetSpeed = speed;
   }
 
@@ -148,6 +149,10 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelIO.setWheelTwoVoltage(volts);
   }
 
+  public boolean flywheelCompareVelocity(DoublePredicate velocity) {
+    return velocity.test(flywheelInputs.wheelOneRadSec)
+        && velocity.test(flywheelInputs.wheelTwoRadSec);
+  }
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return sysId.quasistatic(direction);
@@ -163,5 +168,9 @@ public class ShooterSubsystem extends SubsystemBase {
     wheelTwoloop.setNextR(VecBuilder.fill(0.0));
     flywheelIO.setWheelOneVoltage(0.0);
     flywheelIO.setWheelTwoVoltage(0.0);
+  }
+
+  public void setPusherVoltage(double voltage) {
+    shooterIO.setMotorVoltage(voltage);
   }
 }
