@@ -28,12 +28,14 @@ public class VisionSubsystem extends VirtualSubsystem {
 
     if (limelightInputs.captureTimestamp != lastTimestamp) {
       lastTimestamp = limelightInputs.captureTimestamp;
-      for (BiConsumer<Pose3d, Double> poseConsumer : botPoseConsumers) {
-        poseConsumer.accept(limelightInputs.selfPoseFieldSpace, limelightInputs.captureTimestamp);
+      for (BiConsumer<Pose3d, Double> botPoseConsumer : botPoseConsumers) {
+        botPoseConsumer.accept(
+            limelightInputs.selfPoseFieldSpace, limelightInputs.captureTimestamp);
       }
 
-      for (BiConsumer<Pose3d, Double> poseConsumer : targetConsumers) {
-        poseConsumer.accept(limelightInputs.targetPoseRobotSpace, limelightInputs.captureTimestamp);
+      for (BiConsumer<Pose3d, Double> targetConsumer : targetConsumers) {
+        targetConsumer.accept(
+            limelightInputs.targetPoseRobotSpace, limelightInputs.captureTimestamp);
       }
     }
   }
