@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.util.VirtualSubsystem;
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
+import java.util.function.IntSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionSubsystem extends VirtualSubsystem {
@@ -54,5 +55,9 @@ public class VisionSubsystem extends VirtualSubsystem {
 
   public void removeTargerPoseConsumer(BiConsumer<Pose3d, Double> poseConsumer) {
     targetConsumers.remove(poseConsumer);
+  }
+
+  public void setVisionPipeline(IntSupplier pipeline) {
+    limelightIO.setPipeline(pipeline.getAsInt());
   }
 }
