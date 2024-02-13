@@ -113,9 +113,10 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     inputs.turnAbsolutePosition =
         new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
-    inputs.turnPosition = new Rotation2d(turnRelativeEncoder.getPosition());
+    inputs.turnPosition =
+        new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
 
-    inputs.turnVelocityRadPerSec = turnRelativeEncoder.getVelocity();
+    inputs.turnVelocityRadPerSec = turnAbsoluteEncoder.getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnSparkMax.getOutputCurrent()};
   }
