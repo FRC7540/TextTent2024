@@ -3,13 +3,13 @@ package frc.robot.subsystems.drivebase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.I2C;
 
 public class GyroIONavX implements GyroIO {
   AHRS ahrs;
 
   public GyroIONavX() {
-    ahrs = new AHRS(SerialPort.Port.kMXP);
+    ahrs = new AHRS(I2C.Port.kMXP);
   }
 
   @Override
