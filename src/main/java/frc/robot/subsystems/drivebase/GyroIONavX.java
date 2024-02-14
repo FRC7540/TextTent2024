@@ -22,4 +22,9 @@ public class GyroIONavX implements GyroIO {
     inputs.quaternion[2] = ahrs.getQuaternionY();
     inputs.quaternion[3] = ahrs.getQuaternionZ();
   }
+
+  @Override
+  public void resetGyro() {
+    ahrs.reset();
+  }
 }

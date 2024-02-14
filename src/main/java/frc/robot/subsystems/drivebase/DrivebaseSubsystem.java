@@ -295,4 +295,12 @@ public class DrivebaseSubsystem extends SubsystemBase {
   public static Translation2d[] getModuleTranslations() {
     return Constants.Drivebase.MODULE_TRANSLATIONS;
   }
+
+  public Command zeroGyroCommand() {
+    return this.runOnce(() -> gyroIO.resetGyro());
+  }
+
+  public Command zeroPoseCommand() {
+    return this.runOnce(() -> setPose(new Pose2d()));
+  }
 }
