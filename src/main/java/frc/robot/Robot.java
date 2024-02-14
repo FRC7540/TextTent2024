@@ -40,7 +40,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   public static boolean isReplay = false;
-  public static Pose2d startingPosition = new Pose2d(2.0, 7.0, new Rotation2d());
+  public static Pose2d startingPosition = new Pose2d(2.0, 2.0, new Rotation2d());
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
