@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drivebase;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
 
@@ -15,7 +14,7 @@ public class GyroIONavX implements GyroIO {
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = ahrs.isConnected();
-    inputs.yawPosition = new Rotation2d(Units.degreesToRadians(ahrs.getFusedHeading()));
+    inputs.yawPosition = ahrs.getRotation2d();
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(ahrs.getRate());
     inputs.quaternion[0] = ahrs.getQuaternionW();
     inputs.quaternion[1] = ahrs.getQuaternionX();

@@ -54,9 +54,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(
-          kinematics, rawGyroRotation, lastModulePositions, Robot.startingPosition);
+  private SwerveDrivePoseEstimator poseEstimator;
 
   public DrivebaseSubsystem(
       GyroIO gyroIO,
@@ -73,6 +71,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
     // dashboard stuff
     SmartDashboard.putData("Field", field);
 
+    poseEstimator =
+        new SwerveDrivePoseEstimator(
+            kinematics, rawGyroRotation, getModulePositions(), Robot.startingPosition);
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -272,9 +273,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   /**
-   * Adds a vision measurement to the pose estimator.
+   * Adds a 3d vision measurement to the pose estimator.
    *
-   * @param visionPose The pose of the robot as measured by the vision camera, pose 3d.
+   * @param visionPose The pose of the robot as measured by the vision camera.
    * @param timestamp The timestamp of the vision measurement in seconds.
    */
   public void addVisionMeasurement(Pose3d visionPose, double timestamp) {
