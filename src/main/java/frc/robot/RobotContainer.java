@@ -25,7 +25,6 @@ import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
 import frc.robot.subsystems.vison.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -40,11 +39,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
-  
+
   private ShooterSubsystem shooterSubsystem;
   private DrivebaseSubsystem drivebaseSubsystem;
   private VisionSubsystem visionSubsystem;
-
 
   public XboxController operatorController =
       new XboxController(Constants.HID.operatorControlerPort);
@@ -85,13 +83,13 @@ public class RobotContainer {
               new ModuleIOSparkMax(1) {},
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
-    } 
+    }
 
     // Instantiate missing subsystems
 
-    flywheelSubsystem =
-        flywheelSubsystem != null
-            ? flywheelSubsystem
+    shooterSubsystem =
+        shooterSubsystem != null
+            ? shooterSubsystem
             : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
     drivebaseSubsystem =
         drivebaseSubsystem != null
