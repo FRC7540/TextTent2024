@@ -25,6 +25,9 @@ import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vison.LimelightIO;
+import frc.robot.subsystems.vison.VisionIO;
+import frc.robot.subsystems.vison.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -37,8 +40,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
-  public final ShooterSubsystem shooterSubsystem;
-  public final DrivebaseSubsystem drivebaseSubsystem;
+  
+  private ShooterSubsystem shooterSubsystem;
+  private DrivebaseSubsystem drivebaseSubsystem;
+  private VisionSubsystem visionSubsystem;
+
 
   public XboxController operatorController =
       new XboxController(Constants.HID.operatorControlerPort);
@@ -49,8 +55,10 @@ public class RobotContainer {
     // Simulation
     if (Robot.isSimulation() && !Robot.isReplay) {
       // We are in a simulation, instantiate simulation classes
+
       System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
       shooterSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIOSim());
+
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
@@ -58,9 +66,11 @@ public class RobotContainer {
               new ModuleIOSim() {},
               new ModuleIOSim() {},
               new ModuleIOSim() {});
+      visionSubsystem = new VisionSubsystem(new VisionIO() {});
+
     } else if (Robot.isReal()) {
       // We are on a real robot, instantiate hardware classes
-      System.out.println("Real robot detected! Instantiating subsystems.");
+      System.out.println("Real robot detected!");
 
       // Only create the real IO layer if we need to
       shooterSubsystem =
@@ -75,20 +85,27 @@ public class RobotContainer {
               new ModuleIOSparkMax(1) {},
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
-    } else {
-      // Fill everything else, we are probally in a replay!
-      System.out.println("We must be in a replay! Instantiating bare I/O layers.");
-      shooterSubsystem = new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+    } 
 
-      drivebaseSubsystem =
-          new DrivebaseSubsystem(
-              new GyroIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {});
-    }
+    // Instantiate missing subsystems
 
+    flywheelSubsystem =
+        flywheelSubsystem != null
+            ? flywheelSubsystem
+            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+    drivebaseSubsystem =
+        drivebaseSubsystem != null
+            ? drivebaseSubsystem
+            : new DrivebaseSubsystem(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+    visionSubsystem =
+        visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
+
+    registerVisionConsumers();
     configureDefaultCommands();
     configureBindings();
 
@@ -122,6 +139,10 @@ public class RobotContainer {
             driverController::getRightX,
             driverController::getLeftTriggerAxis,
             drivebaseSubsystem));
+  }
+
+  private void registerVisionConsumers() {
+    visionSubsystem.registerBotPoseConsumer(drivebaseSubsystem::addVisionMeasurement);
   }
 
   public void initPathPlanner() {}

@@ -44,6 +44,7 @@ public class ModuleIOSparkMax implements ModuleIO {
             new CANSparkMax(Constants.Drivebase.ModBL.TURN_SPARKMAX_CAN_ID, MotorType.kBrushless);
         absoluteEncoderOffset = Constants.Drivebase.ModBL.ABSOULUTE_OFFSET;
         turnSparkMax.setInverted(Constants.Drivebase.ModBL.TURN_MOTOR_INVERT);
+
         break;
       case 3:
         driveSparkMax =
@@ -68,8 +69,9 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnAbsoluteEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
 
     turnAbsoluteEncoder.setInverted(true);
-    turnRelativeEncoder.setInverted(true);
+    // turnRelativeEncoder.setInverted(true);
 
+    // turnSparkMax.setInverted(true);
     turnAbsoluteEncoder.setPositionConversionFactor(2 * Math.PI);
     turnAbsoluteEncoder.setVelocityConversionFactor((2 * Math.PI) / 60.0);
 
@@ -111,9 +113,10 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     inputs.turnAbsolutePosition =
         new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
-    inputs.turnPosition = new Rotation2d(turnRelativeEncoder.getPosition());
+    inputs.turnPosition =
+        new Rotation2d(turnAbsoluteEncoder.getPosition()).plus(absoluteEncoderOffset);
 
-    inputs.turnVelocityRadPerSec = turnRelativeEncoder.getVelocity();
+    inputs.turnVelocityRadPerSec = turnAbsoluteEncoder.getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {turnSparkMax.getOutputCurrent()};
   }

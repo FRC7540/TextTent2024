@@ -63,7 +63,7 @@ public class Module {
         // If we are not simulating we must be on a real robot.
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
         driveFeedback = new PIDController(0.04, 0.0, 0.0);
-        turnFeedback = new PIDController(1.0, 0.0, 0.0);
+        turnFeedback = new PIDController(2.0, 0.001, 0.07);
         break;
     }
 
@@ -166,12 +166,12 @@ public class Module {
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * Constants.Drivebase.WHEEL_RADIUS;
+    return inputs.drivePositionRad;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec * Constants.Drivebase.WHEEL_RADIUS;
+    return inputs.driveVelocityRadPerSec;
   }
 
   /** Returns the module position (turn angle and drive position). */

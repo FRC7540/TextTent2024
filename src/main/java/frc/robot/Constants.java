@@ -50,12 +50,15 @@ public final class Constants {
   public static final class Drivebase {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(1.5);
     public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2;
-    public static final double DRIVE_PINON = 13;
+    public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER * Math.PI;
+    public static final int DRIVE_PINON = 13;
     public static final double TURN_GEAR_RATIO = 46.42;
-    public static final double DRIVE_GEAR_RATIO = 5.08;
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
+    // bevel pinion
+    public static final double DRIVE_GEAR_RATIO = (45.0 * 22) / (DRIVE_PINON * 15);
     public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.63);
-    public static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
-    public static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
+    public static final double TRACK_WIDTH_X = Units.inchesToMeters(29.0);
+    public static final double TRACK_WIDTH_Y = Units.inchesToMeters(29.0);
     public static final double DRIVE_BASE_RADIUS =
         Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
     public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
@@ -64,28 +67,28 @@ public final class Constants {
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
 
     public static final class ModFL {
-      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(-0.5 * Math.PI);
       public static final int DRIVE_SPARKMAX_CAN_ID = 23;
       public static final int TURN_SPARKMAX_CAN_ID = 22;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class ModFR {
-      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(1.0 * Math.PI);
       public static final int DRIVE_SPARKMAX_CAN_ID = 21;
       public static final int TURN_SPARKMAX_CAN_ID = 20;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class ModBL {
-      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(2.0 * Math.PI);
       public static final int DRIVE_SPARKMAX_CAN_ID = 27;
       public static final int TURN_SPARKMAX_CAN_ID = 26;
       public static final boolean TURN_MOTOR_INVERT = false;
     }
 
     public static final class ModBR {
-      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.0);
+      public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(0.5 * Math.PI);
       public static final int DRIVE_SPARKMAX_CAN_ID = 25;
       public static final int TURN_SPARKMAX_CAN_ID = 24;
       public static final boolean TURN_MOTOR_INVERT = false;

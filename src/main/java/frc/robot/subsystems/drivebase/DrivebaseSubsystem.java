@@ -18,6 +18,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -53,9 +54,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(
-          kinematics, rawGyroRotation, lastModulePositions, Robot.startingPosition);
+  private SwerveDrivePoseEstimator poseEstimator;
 
   public DrivebaseSubsystem(
       GyroIO gyroIO,
@@ -72,6 +71,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
     // dashboard stuff
     SmartDashboard.putData("Field", field);
 
+    poseEstimator =
+        new SwerveDrivePoseEstimator(
+            kinematics, rawGyroRotation, getModulePositions(), Robot.startingPosition);
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configureHolonomic(
         this::getPose,
@@ -270,6 +272,16 @@ public class DrivebaseSubsystem extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionPose, timestamp);
   }
 
+  /**
+   * Adds a 3d vision measurement to the pose estimator.
+   *
+   * @param visionPose The pose of the robot as measured by the vision camera.
+   * @param timestamp The timestamp of the vision measurement in seconds.
+   */
+  public void addVisionMeasurement(Pose3d visionPose, double timestamp) {
+    poseEstimator.addVisionMeasurement(visionPose.toPose2d(), timestamp);
+  }
+
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return Constants.Drivebase.MAX_LINEAR_SPEED;
@@ -283,5 +295,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return Constants.Drivebase.MODULE_TRANSLATIONS;
+  }
+
+  public Command zeroGyroCommand() {
+    return this.runOnce(() -> gyroIO.resetGyro());
+  }
+
+  public Command zeroPoseCommand() {
+    return this.runOnce(() -> setPose(new Pose2d()));
   }
 }
