@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.drive.PathFindToPoint;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
@@ -25,7 +25,10 @@ import frc.robot.subsystems.shooter.FlywheelIO;
 import frc.robot.subsystems.shooter.FlywheelIOSim;
 import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vison.VisionIO;
+import frc.robot.subsystems.vison.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -38,20 +41,31 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
 
   private final LoggedDashboardChooser<Command> autoChooser;
-  public final ShooterSubsystem flywheelSubsystem;
-  public final DrivebaseSubsystem drivebaseSubsystem;
 
-  public XboxController operatorController =
-      new XboxController(Constants.HID.operatorControlerPort);
-  public XboxController driverController = new XboxController(Constants.HID.driverControllerPort);
+  private ShooterSubsystem shooterSubsystem;
+  private DrivebaseSubsystem drivebaseSubsystem;
+  private VisionSubsystem visionSubsystem;
+
+  public CommandXboxController operatorController =
+      new CommandXboxController(Constants.HID.operatorControlerPort);
+  public CommandXboxController driverController =
+      new CommandXboxController(Constants.HID.driverControllerPort);
+
+  // Dashboard bindings
+  LoggedDashboardNumber flywheelSpeedInput = new LoggedDashboardNumber("Flywheel speeds");
+  LoggedDashboardNumber pathFindX = new LoggedDashboardNumber("pathfinding x");
+  LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
+  LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
   public RobotContainer() {
     // Instantiate subsystems
     // Simulation
     if (Robot.isSimulation() && !Robot.isReplay) {
       // We are in a simulation, instantiate simulation classes
+
       System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
-      flywheelSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIO() {});
+      shooterSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIOSim());
+
       drivebaseSubsystem =
           new DrivebaseSubsystem(
               new GyroIO() {},
@@ -59,12 +73,14 @@ public class RobotContainer {
               new ModuleIOSim() {},
               new ModuleIOSim() {},
               new ModuleIOSim() {});
+      visionSubsystem = new VisionSubsystem(new VisionIO() {});
+
     } else if (Robot.isReal()) {
       // We are on a real robot, instantiate hardware classes
-      System.out.println("Real robot detected! Instantiating subsystems.");
+      System.out.println("Real robot detected!");
 
       // Only create the real IO layer if we need to
-      flywheelSubsystem =
+      shooterSubsystem =
           Preferences.getBoolean("flywheelReal", Constants.Flags.USE_REAL_FLYWHEEL_HARDWARE)
               ? new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {})
               : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
@@ -76,20 +92,27 @@ public class RobotContainer {
               new ModuleIOSparkMax(1) {},
               new ModuleIOSparkMax(2) {},
               new ModuleIOSparkMax(3) {});
-    } else {
-      // Fill everything else, we are probally in a replay!
-      System.out.println("We must be in a replay! Instantiating bare I/O layers.");
-      flywheelSubsystem = new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
-
-      drivebaseSubsystem =
-          new DrivebaseSubsystem(
-              new GyroIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {},
-              new ModuleIO() {});
     }
 
+    // Instantiate missing subsystems
+
+    shooterSubsystem =
+        shooterSubsystem != null
+            ? shooterSubsystem
+            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+    drivebaseSubsystem =
+        drivebaseSubsystem != null
+            ? drivebaseSubsystem
+            : new DrivebaseSubsystem(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+    visionSubsystem =
+        visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
+
+    registerVisionConsumers();
     configureDefaultCommands();
     configureBindings();
 
@@ -102,23 +125,30 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
-    Trigger moais = new Trigger(operatorController::getAButton);
-    moais.whileTrue(
-        new RunCommand(
-            () -> {
-              flywheelSubsystem.setBothFlywheelSpeeds(moai.get());
-            },
-            flywheelSubsystem));
+    operatorController
+        .a()
+        .debounce(0.2)
+        .onTrue(
+            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+
+    operatorController
+        .b()
+        .debounce(0.2)
+        .onTrue(
+            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+
+    driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
+    driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
+    driverController
+        .a()
+        .debounce(1)
+        .onTrue(
+            AutoBuilder.pathfindToPose(
+                new Pose2d(pathFindX.get(), pathFindY.get(), new Rotation2d(pathFindTheta.get())),
+                Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
   }
 
   private void configureDefaultCommands() {
-    flywheelSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              flywheelSubsystem.setBothFlywheelSpeeds(0);
-            },
-            flywheelSubsystem));
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDrive(
             driverController::getLeftY,
@@ -126,6 +156,10 @@ public class RobotContainer {
             driverController::getRightX,
             driverController::getLeftTriggerAxis,
             drivebaseSubsystem));
+  }
+
+  private void registerVisionConsumers() {
+    visionSubsystem.registerBotPoseConsumer(drivebaseSubsystem::addVisionMeasurement);
   }
 
   public void initPathPlanner() {}

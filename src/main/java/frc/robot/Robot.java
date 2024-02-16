@@ -123,6 +123,7 @@ public class Robot extends LoggedRobot {
 
     // Start AdvantageKit logger
     Logger.start();
+
     // Necessary: see https://pathplanner.dev/pplib-pathfinding.html#custom-pathfinders
     Pathfinding.setPathfinder(new LocalADStarAK());
 

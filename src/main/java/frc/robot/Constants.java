@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -49,9 +51,12 @@ public final class Constants {
   public static final class Drivebase {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(1.5);
     public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2;
-    public static final double DRIVE_PINON = 13;
+    public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER * Math.PI;
+    public static final int DRIVE_PINON = 13;
     public static final double TURN_GEAR_RATIO = 46.42;
-    public static final double DRIVE_GEAR_RATIO = 5.08;
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
+    // bevel pinion
+    public static final double DRIVE_GEAR_RATIO = (45.0 * 22) / (DRIVE_PINON * 15);
     public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.63);
     public static final double TRACK_WIDTH_X = Units.inchesToMeters(29.0);
     public static final double TRACK_WIDTH_Y = Units.inchesToMeters(29.0);
@@ -61,6 +66,9 @@ public final class Constants {
     public static final double DRIVE_MOMENT_INERTIA = 0.025;
     public static final double TURN_MOMENT_INERTIA = 0.004;
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
+
+    public static final PathConstraints DEFAULT_PATHFINDING_CONSTRAINTS =
+        new PathConstraints(2.0, 1.0, Units.degreesToRadians(100), Units.degreesToRadians(100));
 
     public static final class ModFL {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(-0.5 * Math.PI);
@@ -99,9 +107,30 @@ public final class Constants {
   }
 
   public static final class Shooter {
-    public static final int SHOOTER_MOTOR_ONE_CAN_ID = 16;
+    public static final double NOMINAL_LOOP_PERIOD = 0.02;
+    public static final int PUSHER_MOTOR_CAN_ID = 16;
     public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
-    public static final boolean MOTOR_ONE_INVERTED = false;
+    public static final boolean PUSHER_MOTOR_INVERTED = false;
+
+    public static enum Direction {
+      FORWARD(6.0),
+      STOP(0.0),
+      BACK(-6.0);
+      private double voltage;
+
+      Direction(double voltage) {
+        this.voltage = voltage;
+      }
+
+      public double getVoltage() {
+        return voltage;
+      }
+    }
+
+    public static final double PUSHER_WAIT_TIME = 2.0;
+    public static final double PUSHER_MOMENT_OF_INTERTIA = 0.001;
+    public static final DCMotor PUSHER_MOTOR_TYPE = DCMotor.getNeo550(1);
+    public static final double PUSHER_MOTOR_GEART_RATIO = 1.0;
 
     public static final class Flywheel {
       public static final int MOTOR_ONE_CAN_ID = 10;
@@ -120,7 +149,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final double MOMENT_OF_INERTIA = 1.0005;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;
@@ -133,7 +162,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0005;
+        public static final double MOMENT_OF_INERTIA = 1.0005;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
