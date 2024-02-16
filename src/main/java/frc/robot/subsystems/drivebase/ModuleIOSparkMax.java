@@ -100,6 +100,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     driveSparkMax.setCANTimeout(0);
     turnSparkMax.setCANTimeout(0);
 
+    driveSparkMax.setInverted(true);
     driveSparkMax.burnFlash();
     turnSparkMax.burnFlash();
   }

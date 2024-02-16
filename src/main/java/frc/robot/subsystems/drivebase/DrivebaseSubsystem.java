@@ -302,6 +302,6 @@ public class DrivebaseSubsystem extends SubsystemBase {
   }
 
   public Command getZeroPoseCommand() {
-    return this.runOnce(() -> setPose(new Pose2d()));
+    return this.runOnce(() -> setPose(new Pose2d(2.0, 2.0, new Rotation2d())));
   }
 }

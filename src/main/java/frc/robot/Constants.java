@@ -50,13 +50,13 @@ public final class Constants {
 
   public static final class Drivebase {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(1.5);
-    public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2;
+    public static final double WHEEL_DIAMETER = Units.inchesToMeters(3);
     public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER * Math.PI;
     public static final int DRIVE_PINON = 13;
     public static final double TURN_GEAR_RATIO = 46.42;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
     // bevel pinion
-    public static final double DRIVE_GEAR_RATIO = (45.0 * 22) / (DRIVE_PINON * 15);
+    public static final double DRIVE_GEAR_RATIO = (45.0 * 22.0) / (DRIVE_PINON * 15.0);
     public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.63);
     public static final double TRACK_WIDTH_X = Units.inchesToMeters(29.0);
     public static final double TRACK_WIDTH_Y = Units.inchesToMeters(29.0);
