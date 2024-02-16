@@ -5,13 +5,12 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.Shooting.ShootNote;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
@@ -44,9 +43,16 @@ public class RobotContainer {
   private DrivebaseSubsystem drivebaseSubsystem;
   private VisionSubsystem visionSubsystem;
 
-  public XboxController operatorController =
-      new XboxController(Constants.HID.operatorControlerPort);
-  public XboxController driverController = new XboxController(Constants.HID.driverControllerPort);
+  public CommandXboxController operatorController =
+      new CommandXboxController(Constants.HID.operatorControlerPort);
+  public CommandXboxController driverController =
+      new CommandXboxController(Constants.HID.driverControllerPort);
+
+  // Dashboard bindings
+  LoggedDashboardNumber flywheelSpeedInput = new LoggedDashboardNumber("Flywheel speeds");
+  LoggedDashboardNumber pathFindX = new LoggedDashboardNumber("pathfinding x");
+  LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
+  LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
   public RobotContainer() {
     // Instantiate subsystems
@@ -111,25 +117,30 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    LoggedDashboardNumber moai = new LoggedDashboardNumber("Moai", 0.0);
-    Trigger moais = new Trigger(operatorController::getAButton);
-    moais.whileTrue(
-        new RunCommand(
-            () -> {
-              shooterSubsystem.setFlywheelSpeeds(moai.get());
-            },
-            shooterSubsystem));
+    operatorController
+        .a()
+        .debounce(0.2)
+        .onTrue(
+            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
 
-    SmartDashboard.putData(new ShootNote(shooterSubsystem, () -> 0.2));
+    operatorController
+        .b()
+        .debounce(0.2)
+        .onTrue(
+            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+
+    driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
+    driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
+    driverController
+        .a()
+        .debounce(1)
+        .onTrue(
+            AutoBuilder.pathfindToPose(
+                new Pose2d(pathFindX.get(), pathFindY.get(), new Rotation2d(pathFindTheta.get())),
+                Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
   }
 
   private void configureDefaultCommands() {
-    shooterSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              shooterSubsystem.setFlywheelSpeeds(0);
-            },
-            shooterSubsystem));
     drivebaseSubsystem.setDefaultCommand(
         new DefaultDrive(
             driverController::getLeftY,

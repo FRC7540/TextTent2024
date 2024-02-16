@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -65,6 +66,9 @@ public final class Constants {
     public static final double DRIVE_MOMENT_INERTIA = 0.025;
     public static final double TURN_MOMENT_INERTIA = 0.004;
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
+
+    public static final PathConstraints DEFAULT_PATHFINDING_CONSTRAINTS =
+        new PathConstraints(2.0, 1.0, Units.degreesToRadians(100), Units.degreesToRadians(100));
 
     public static final class ModFL {
       public static final Rotation2d ABSOULUTE_OFFSET = new Rotation2d(-0.5 * Math.PI);

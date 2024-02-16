@@ -297,11 +297,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
     return Constants.Drivebase.MODULE_TRANSLATIONS;
   }
 
-  public Command zeroGyroCommand() {
+  public Command getZeroGyroCommand() {
     return this.runOnce(() -> gyroIO.resetGyro());
   }
 
-  public Command zeroPoseCommand() {
+  public Command getZeroPoseCommand() {
     return this.runOnce(() -> setPose(new Pose2d()));
   }
 }
