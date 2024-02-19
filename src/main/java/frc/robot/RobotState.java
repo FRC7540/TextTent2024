@@ -5,10 +5,12 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import frc.robot.util.States.IntakeState;
 
 public class RobotState {
   private Pose2d robotPose2D;
   private Pose3d robotPose3D;
+  private IntakeState intakeStates;
 
   public RobotState() {}
 
