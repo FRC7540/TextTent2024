@@ -24,7 +24,7 @@ public class IntakeIOSparkMax implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {}
 
   @Override
-  public void driveMotor(double voltage) {
+  public void setVoltage(double voltage) {
     motorOne.setVoltage(voltage);
   }
 }
