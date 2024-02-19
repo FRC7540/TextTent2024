@@ -176,4 +176,8 @@ public final class Constants {
     public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean MOTOR_ONE_INVERTED = false;
   }
+
+  public static final class Vision {
+    public static final String APRIL_TAG_NETWORKTABLE_TOPIC_NAME = "limelight-april";
+  }
 }
