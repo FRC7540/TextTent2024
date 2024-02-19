@@ -5,14 +5,22 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import frc.robot.util.States.FlywheelState;
 import frc.robot.util.States.IntakeState;
+import frc.robot.util.States.ShooterState;
 
 public class RobotState {
   private Pose2d robotPose2D;
   private Pose3d robotPose3D;
-  private IntakeState intakeStates;
+  private IntakeState intakeState;
+  private ShooterState shooterState;
+  private FlywheelState flywheelState;
 
-  public RobotState() {}
+  public RobotState() {
+    intakeState = IntakeState.UNDEFINED;
+    shooterState = ShooterState.UNDEFINED;
+    flywheelState = FlywheelState.UNDEFINED;
+  }
 
   /*Set the robots 2d pose to this position, does not change the 3d pose
    */
@@ -33,5 +41,15 @@ public class RobotState {
   /* Gets the current authoratative 3d pose of the robot */
   public Pose3d getCurrentTobotPose3d() {
     return robotPose3D;
+  }
+
+  /* Sets the current intake state */
+  public void setIntakeState(IntakeState state) {
+    this.intakeState = state;
+  }
+
+  /* Gets the current intake state */
+  public IntakeState getIntakeState() {
+    return this.intakeState;
   }
 }
