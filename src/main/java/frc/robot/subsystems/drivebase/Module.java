@@ -88,8 +88,8 @@ public class Module {
 
     // On first cycle, reset relative turn encoder
     // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    if (turnRelativeOffset == null && inputs.turnAbsolutePosition.getRadians() != 0.0) {
-      turnRelativeOffset = inputs.turnAbsolutePosition.minus(inputs.turnPosition);
+    if (turnRelativeOffset == null && inputs.turnAbsolutePositionRad.getRadians() != 0.0) {
+      turnRelativeOffset = inputs.turnAbsolutePositionRad.minus(inputs.turnPositionRad);
     }
 
     // Run closed loop turn control
@@ -111,7 +111,7 @@ public class Module {
         double velocityRadPerSec = adjustSpeedSetpoint / Constants.Drivebase.WHEEL_RADIUS;
         io.setDriveVoltage(
             driveFeedforward.calculate(velocityRadPerSec)
-                + driveFeedback.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec));
+                + driveFeedback.calculate(inputs.driveVelocityMetersPerSecond, velocityRadPerSec));
       }
     }
   }
@@ -160,18 +160,18 @@ public class Module {
     if (turnRelativeOffset == null) {
       return new Rotation2d();
     } else {
-      return inputs.turnPosition.plus(turnRelativeOffset);
+      return inputs.turnPositionRad.plus(turnRelativeOffset);
     }
   }
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad;
+    return inputs.drivePositionMeters;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec;
+    return inputs.driveVelocityMetersPerSecond;
   }
 
   /** Returns the module position (turn angle and drive position). */
@@ -186,6 +186,6 @@ public class Module {
 
   /** Returns the drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
-    return inputs.driveVelocityRadPerSec;
+    return inputs.driveVelocityMetersPerSecond;
   }
 }
