@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DefaultDrive;
+import frc.robot.commands.intake.IntakeNote;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
@@ -87,6 +88,8 @@ public class RobotContainer {
         .debounce(0.2)
         .onTrue(
             new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+
+    operatorController.x().debounce(0.02).onTrue(new IntakeNote(intakeSubsystem));
 
     driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
     driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());

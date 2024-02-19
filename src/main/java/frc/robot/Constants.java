@@ -178,5 +178,6 @@ public final class Constants {
     public static final double MOTOR_MOMENT_OF_INTERTIA = 0.001;
     public static final DCMotor MOTOR_TYPE = DCMotor.getNeo550(1);
     public static final double MOTOR_GEAR_RATIO = 1.0;
+    public static final double INTAKE_TIME_SECONDS = 1.5;
   }
 }
