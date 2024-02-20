@@ -175,5 +175,6 @@ public final class Constants {
     public static final int MOTOR_ONE_CAN_ID = 14;
     public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean MOTOR_ONE_INVERTED = false;
+    public static final int INTAKE_NOTE_LIMIT_SWITCH_PORT = 0;
   }
 }

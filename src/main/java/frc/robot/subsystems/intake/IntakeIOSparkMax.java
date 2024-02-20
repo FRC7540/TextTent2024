@@ -2,12 +2,16 @@ package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
 public class IntakeIOSparkMax implements IntakeIO {
 
   private final CANSparkMax motorOne =
       new CANSparkMax(Constants.Intake.MOTOR_ONE_CAN_ID, Constants.Intake.SPARK_MOTOR_ONE_TYPE);
+
+  private final DigitalInput intakeNoteLimtitSwitch =
+      new DigitalInput(Constants.Intake.INTAKE_NOTE_LIMIT_SWITCH_PORT);
 
   public IntakeIOSparkMax() {
     motorOne.restoreFactoryDefaults();
@@ -21,7 +25,9 @@ public class IntakeIOSparkMax implements IntakeIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {}
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.intakeNoteSwitch = intakeNoteLimtitSwitch.get();
+  }
 
   @Override
   public void driveMotor(double voltage) {
