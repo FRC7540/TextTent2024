@@ -178,8 +178,10 @@ public final class Constants {
     public static final int MOTOR_ONE_CAN_ID = 14;
     public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean MOTOR_ONE_INVERTED = false;
+    public static final int INTAKE_NOTE_LIMIT_SWITCH_PORT = 0;
     public static final double MOTOR_MOMENT_OF_INTERTIA = 0.001;
     public static final DCMotor MOTOR_TYPE = DCMotor.getNeo550(1);
     public static final double MOTOR_GEAR_RATIO = 1.0;
+
   }
 }
