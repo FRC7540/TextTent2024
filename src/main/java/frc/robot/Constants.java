@@ -112,6 +112,9 @@ public final class Constants {
     public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean PUSHER_MOTOR_INVERTED = false;
 
+    public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
+    public static final int SHOT_LIMIT_SWITCH_PORT = 2;
+
     public static enum Direction {
       FORWARD(6.0),
       STOP(0.0),
@@ -176,5 +179,9 @@ public final class Constants {
     public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean MOTOR_ONE_INVERTED = false;
     public static final int INTAKE_NOTE_LIMIT_SWITCH_PORT = 0;
+    public static final double MOTOR_MOMENT_OF_INTERTIA = 0.001;
+    public static final DCMotor MOTOR_TYPE = DCMotor.getNeo550(1);
+    public static final double MOTOR_GEAR_RATIO = 1.0;
+
   }
 }
