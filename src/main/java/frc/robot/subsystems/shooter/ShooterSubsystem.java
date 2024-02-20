@@ -175,4 +175,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setPusherVoltage(double voltage) {
     shooterIO.setMotorVoltage(voltage);
   }
+
+  public boolean getShotLimitSwitch() {
+    return shooterInputs.shotLimitSwitch;
+  }
+
+  public boolean getHolderLimitSwitch() {
+    return shooterInputs.holdingLimitSwitch;
+  }
 }
