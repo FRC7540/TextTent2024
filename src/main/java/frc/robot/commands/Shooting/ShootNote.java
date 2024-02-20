@@ -13,7 +13,7 @@ public class ShootNote extends SequentialCommandGroup {
         // Ultimatley we should use actualy feedback from the shooter to wait until the note has
         // been fired
         new ShotPush(shooterSubsystem, Constants.Shooter.Direction.FORWARD)
-            .withTimeout(Constants.Shooter.PUSHER_WAIT_TIME),
+            .until(shooterSubsystem.getShotLimitSwitch()),
         new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> 0.0));
   }
 }
