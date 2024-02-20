@@ -6,6 +6,8 @@ public interface ShooterIO {
   @AutoLog
   public static class ShooterIOInputs {
     public double pusherMotorAppliedVoltage = 0.0;
+    public boolean holdingLimitSwitch = false;
+    public boolean shotLimitSwitch = false;
   }
 
   /** Updates the set of loggable inputs. */
