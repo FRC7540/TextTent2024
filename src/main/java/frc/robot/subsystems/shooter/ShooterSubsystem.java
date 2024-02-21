@@ -172,17 +172,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
     if (flywheelState == FlywheelState.STOPPED && getHolderLimitSwitch().getAsBoolean() == false) {
       shooterState = ShooterState.EMPTY;
-    } else if (flywheelState == FlywheelState.STOPPED && getHolderLimitSwitch().getAsBoolean() == true) {
+    } else if (flywheelState == FlywheelState.STOPPED
+        && getHolderLimitSwitch().getAsBoolean() == true) {
       shooterState = ShooterState.LOADED;
-    } else if (flywheelState == FlywheelState.SPINNING_UP && getHolderLimitSwitch().getAsBoolean() == true) {
+    } else if (flywheelState == FlywheelState.SPINNING_UP
+        && getHolderLimitSwitch().getAsBoolean() == true) {
       shooterState = ShooterState.ARMING;
-    } else if (flywheelState == FlywheelState.AT_SPEED && getHolderLimitSwitch().getAsBoolean() == true) {
+    } else if (flywheelState == FlywheelState.AT_SPEED
+        && getHolderLimitSwitch().getAsBoolean() == true) {
       shooterState = ShooterState.ARMED;
-    } else if (flywheelState == FlywheelState.AT_SPEED && getShotLimitSwitch().getAsBoolean() == true) {
+    } else if (flywheelState == FlywheelState.AT_SPEED
+        && getShotLimitSwitch().getAsBoolean() == true) {
       shooterState = ShooterState.SHOOTING;
-    } else if (flywheelState == FlywheelState.SPINNING_DOWN && getHolderLimitSwitch().getAsBoolean() == false) {
+    } else if (flywheelState == FlywheelState.SPINNING_DOWN
+        && getHolderLimitSwitch().getAsBoolean() == false) {
       shooterState = ShooterState.RECOVERING;
     }
+  }
 
   @Override
   public void simulationPeriodic() {}
