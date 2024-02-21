@@ -22,5 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setMotorVoltage(double voltage) {
     io.setVoltage(voltage);
+  public boolean getIntakeNoteLimitSwitch() {
+    return inputs.intakeNoteSwitch;
   }
 }
