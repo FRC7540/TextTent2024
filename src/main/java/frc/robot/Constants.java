@@ -183,4 +183,8 @@ public final class Constants {
     public static final DCMotor MOTOR_TYPE = DCMotor.getNeo550(1);
     public static final double MOTOR_GEAR_RATIO = 1.0;
   }
+
+  public static final class Vision {
+    public static final String APRIL_TAG_NETWORKTABLE_TOPIC_NAME = "limelight-april";
+  }
 }
