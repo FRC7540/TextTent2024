@@ -3,6 +3,7 @@ package frc.robot.subsystems.vison;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.IntegerEntry;
@@ -30,7 +31,8 @@ public class LimelightIO implements VisionIO {
   private final IntegerPublisher pipelinePublisher;
 
   public LimelightIO() {
-    selfBotPoseSubscriber = limelight.getDoubleArrayTopic("botpose").subscribe(new double[6]);
+    selfBotPoseSubscriber =
+        limelight.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[6]);
     targetPoseRobotSpaceSubscriber =
         limelight.getDoubleArrayTopic("targetpose_robotspace").subscribe(new double[6]);
     validEntrySubscriber = limelight.getDoubleTopic("tv").subscribe(0.0);
@@ -50,9 +52,9 @@ public class LimelightIO implements VisionIO {
                         selfBotPoseSubscriber.get()[1],
                         selfBotPoseSubscriber.get()[2]),
                     new Rotation3d(
-                        selfBotPoseSubscriber.get()[3],
-                        selfBotPoseSubscriber.get()[4],
-                        selfBotPoseSubscriber.get()[5]));
+                        Units.degreesToRadians(selfBotPoseSubscriber.get()[3]),
+                        Units.degreesToRadians(selfBotPoseSubscriber.get()[4]),
+                        Units.degreesToRadians(selfBotPoseSubscriber.get()[5])));
             targetPoseRobotSpace =
                 new Pose3d(
                     new Translation3d(
@@ -60,9 +62,9 @@ public class LimelightIO implements VisionIO {
                         targetPoseRobotSpaceSubscriber.get()[1],
                         targetPoseRobotSpaceSubscriber.get()[2]),
                     new Rotation3d(
-                        targetPoseRobotSpaceSubscriber.get()[3],
-                        targetPoseRobotSpaceSubscriber.get()[4],
-                        targetPoseRobotSpaceSubscriber.get()[5]));
+                        Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[3]),
+                        Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[4]),
+                        Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[5])));
             validEntry = validEntrySubscriber.get() == 1.0;
             currentPipeline = (int) pipelineEntry.get();
           }

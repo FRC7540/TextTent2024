@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
 
 public class FlywheelIOSparkMax implements FlywheelIO {
@@ -40,11 +41,15 @@ public class FlywheelIOSparkMax implements FlywheelIO {
     wheelTwoEncoder.setMeasurementPeriod(10);
     wheelTwoEncoder.setAverageDepth(8);
 
-    wheelOneEncoder.setPositionConversionFactor(1 / 2 * Math.PI);
-    wheelTwoEncoder.setPositionConversionFactor(1 / 2 * Math.PI);
+    wheelOneEncoder.setPositionConversionFactor(
+        (2 * Math.PI) / Constants.Shooter.Flywheel.WheelOne.GEAR_RATIO);
+    wheelTwoEncoder.setPositionConversionFactor(
+        (2 * Math.PI) / Constants.Shooter.Flywheel.WheelTwo.GEAR_RATIO);
 
-    wheelOneEncoder.setVelocityConversionFactor(0.1047);
-    wheelTwoEncoder.setVelocityConversionFactor(0.1047);
+    wheelOneEncoder.setVelocityConversionFactor(
+        ((2 * Math.PI) / Constants.Shooter.Flywheel.WheelOne.GEAR_RATIO) / 60);
+    wheelTwoEncoder.setVelocityConversionFactor(
+        ((2 * Math.PI) / Constants.Shooter.Flywheel.WheelTwo.GEAR_RATIO) / 60);
 
     wheelOneSparkMax.setCANTimeout(0);
     wheelTwoSparkMax.setCANTimeout(0);
@@ -66,14 +71,14 @@ public class FlywheelIOSparkMax implements FlywheelIO {
   @Override
   public void updateInputs(FlywheelIOInputs inputs) {
 
-    inputs.wheelOneRadSec = wheelOneEncoder.getVelocity() * 0.25;
-    inputs.wheelOnePositionRad = wheelOneEncoder.getPosition() * 0.25;
+    inputs.wheelOneRadSec = wheelOneEncoder.getVelocity();
+    inputs.wheelOnePositionRad = wheelOneEncoder.getPosition();
     inputs.wheelOneAppliedAmps = wheelOneSparkMax.getOutputCurrent();
     inputs.wheelOneAppliedVolts =
         wheelOneSparkMax.getAppliedOutput() * wheelOneSparkMax.getBusVoltage();
 
-    inputs.wheelTwoRadSec = wheelTwoEncoder.getVelocity() * 0.25;
-    inputs.wheelTwoPositionRad = wheelTwoEncoder.getPosition() * 0.25;
+    inputs.wheelTwoRadSec = wheelTwoEncoder.getVelocity();
+    inputs.wheelTwoPositionRad = wheelTwoEncoder.getPosition();
     inputs.wheelTwoAppliedAmps = wheelTwoSparkMax.getOutputCurrent();
     inputs.wheelTwoAppliedVolts =
         wheelTwoSparkMax.getAppliedOutput() * wheelTwoSparkMax.getBusVoltage();

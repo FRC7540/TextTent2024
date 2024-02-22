@@ -56,6 +56,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
+  private int invert_field_oriented = 0;
+
   public DrivebaseSubsystem(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -164,6 +166,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     // Apply odometry update
     poseEstimator.update(rawGyroRotation, modulePositions);
+
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+      invert_field_oriented = -1;
+    } else {
+      invert_field_oriented = 1;
+    }
   }
 
   /**
@@ -192,7 +201,9 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
   public void drivejoysticks(ChassisSpeeds speeds, boolean isfeildoriented) {
     if (isfeildoriented) {
-      runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation));
+      runVelocity(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+              speeds.times(invert_field_oriented), rawGyroRotation));
     } else {
       runVelocity(speeds);
     }

@@ -27,7 +27,8 @@ public class VisionSubsystem extends VirtualSubsystem {
     limelightIO.updateInputs(limelightInputs);
     Logger.processInputs("Vision/Limelight", limelightInputs);
 
-    if (limelightInputs.captureTimestamp != lastTimestamp) {
+    // We want there to be a new and valid entry before we push updates
+    if ((limelightInputs.captureTimestamp != lastTimestamp) && limelightInputs.validEntry) {
       lastTimestamp = limelightInputs.captureTimestamp;
       for (BiConsumer<Pose3d, Double> botPoseConsumer : botPoseConsumers) {
         botPoseConsumer.accept(
