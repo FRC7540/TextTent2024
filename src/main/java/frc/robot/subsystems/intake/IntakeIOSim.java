@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
 
+// TODO: Implement intake sensors
 public class IntakeIOSim implements IntakeIO {
   private double motorOneVolts = 0.0;
   private DCMotorSim motorOneSim =

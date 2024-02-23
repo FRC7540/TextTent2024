@@ -2,6 +2,7 @@ package frc.robot.commands.Shooting;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.util.States.FlywheelState;
 import java.util.function.DoubleSupplier;
 
 public class FlywheelSpinToTargetVelocity extends Command {
@@ -28,6 +29,6 @@ public class FlywheelSpinToTargetVelocity extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.flywheelCompareVelocity((value) -> value >= goal.getAsDouble());
+    return shooterSubsystem.getFlywheelState() == FlywheelState.AT_SPEED;
   }
 }

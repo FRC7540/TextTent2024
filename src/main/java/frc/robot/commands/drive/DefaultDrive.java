@@ -11,10 +11,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
 
 public class DefaultDrive extends Command {
   private final DrivebaseSubsystem drivebaseSubsystem;
-  private final DoubleSupplier directionX;
-  private final DoubleSupplier directionY;
-  private final DoubleSupplier rotation;
-  private final DoubleSupplier scalar;
+  private final DoubleSupplier xJoystickDoubleSupplier;
+  private final DoubleSupplier yJoystickDoubleSupplier;
+  private final DoubleSupplier thetaJoystickDoubleSupplier;
+  private final DoubleSupplier sclaerInputDoubleSupplier;
   private final LoggedDashboardBoolean feildOriented;
 
   private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(1);
@@ -28,10 +28,10 @@ public class DefaultDrive extends Command {
       DoubleSupplier scalar,
       DrivebaseSubsystem drivebaseSubsystem) {
     this.drivebaseSubsystem = drivebaseSubsystem;
-    this.directionX = directionX;
-    this.directionY = directionY;
-    this.rotation = rotation;
-    this.scalar = scalar;
+    this.xJoystickDoubleSupplier = directionX;
+    this.yJoystickDoubleSupplier = directionY;
+    this.thetaJoystickDoubleSupplier = rotation;
+    this.sclaerInputDoubleSupplier = scalar;
 
     feildOriented = new LoggedDashboardBoolean("feild Oriented", true);
     addRequirements(drivebaseSubsystem);
@@ -41,21 +41,21 @@ public class DefaultDrive extends Command {
   public void execute() {
 
     Double joyStickX =
-        (MathUtil.applyDeadband(directionX.getAsDouble(), 0.1)
+        (MathUtil.applyDeadband(xJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (scalar.getAsDouble() - 1)
+            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
             * 1.0;
 
     Double joyStickY =
-        (MathUtil.applyDeadband(directionY.getAsDouble(), 0.1)
+        (MathUtil.applyDeadband(yJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (scalar.getAsDouble() - 1)
+            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
             * 1.0;
 
     Double joyStickTheta =
-        ((MathUtil.applyDeadband(rotation.getAsDouble(), 0.1)
+        ((MathUtil.applyDeadband(thetaJoystickDoubleSupplier.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_ANGULAR_SPEED)
-                * (scalar.getAsDouble() - 1))
+                * (sclaerInputDoubleSupplier.getAsDouble() - 1))
             * Constants.HID.thetaJoystickScalar
             * 1.0;
 

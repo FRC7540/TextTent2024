@@ -8,5 +8,6 @@ public enum ShooterState {
   ARMED, // The robot is armed and can fire at any moment
   SHOOTING, // The robot is activley shooting a piece, this shouldnt last long
   RECOVERING, // The robot is recovering from a shot
+  SAFING, // The robot is still loaded but we are spinning the flywheels down
   UNDEFINED; // We just shot, spinning down;
 }

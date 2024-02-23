@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.intake.IntakeNote;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
@@ -49,6 +52,7 @@ public class RobotContainer {
   private DrivebaseSubsystem drivebaseSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private VisionSubsystem visionSubsystem;
+  private ClimberSubsystem climberSubsystem;
 
   public CommandXboxController operatorController =
       new CommandXboxController(Constants.HID.operatorControlerPort);
@@ -147,6 +151,8 @@ public class RobotContainer {
     visionSubsystem = new VisionSubsystem(new LimelightIO());
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
+
+    climberSubsystem = new ClimberSubsystem(null);
   }
 
   private void setupForSimulation() {
@@ -164,6 +170,8 @@ public class RobotContainer {
     visionSubsystem = new VisionSubsystem(new VisionIO() {});
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSim());
+
+    climberSubsystem = new ClimberSubsystem(new ClimberIOSim());
   }
 
   private void fillMissingSubsystems() {
@@ -184,5 +192,7 @@ public class RobotContainer {
         visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
     intakeSubsystem =
         intakeSubsystem != null ? intakeSubsystem : new IntakeSubsystem(new IntakeIO() {});
+    climberSubsystem =
+        climberSubsystem != null ? climberSubsystem : new ClimberSubsystem(new ClimberIO() {});
   }
 }

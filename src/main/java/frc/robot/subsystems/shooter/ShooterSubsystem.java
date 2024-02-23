@@ -10,13 +10,19 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
+import frc.robot.Robot;
+import frc.robot.RobotState;
+import frc.robot.util.States.ChamberState;
+import frc.robot.util.States.FiringWheelState;
 import frc.robot.util.States.FlywheelState;
 import frc.robot.util.States.ShooterState;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoublePredicate;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -33,6 +39,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @AutoLogOutput(key = "Shooter/ShooterState")
   private ShooterState shooterState;
+
+  @AutoLogOutput(key = "Shooter/PusherWheelState")
+  private FiringWheelState firingWheelState;
+
+  @AutoLogOutput(key = "Shooter/ChamberState")
+  private ChamberState chamberState;
 
   public static double optimalRotationSpeed = 100;
 
@@ -136,10 +148,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     wheelOneloop.correct(VecBuilder.fill(flywheelInputs.wheelOneRadSec));
     wheelTwoloop.correct(VecBuilder.fill(flywheelInputs.wheelTwoRadSec));
-    wheelOneController.latencyCompensate(
-        wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
-    wheelTwoController.latencyCompensate(
-        wheelTwoFlywheelPlant, Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.025);
+    if (Robot.isReal()) {
+      wheelOneController.latencyCompensate(
+          wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.002);
+      wheelTwoController.latencyCompensate(
+          wheelTwoFlywheelPlant, Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.002);
+    }
 
     wheelOneloop.predict(Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
     wheelTwoloop.predict(Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
@@ -147,51 +161,113 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelIO.setWheelOneVoltage(wheelOneloop.getU(0));
     flywheelIO.setWheelTwoVoltage(wheelTwoloop.getU(0));
 
-    // State
+    determineStates();
 
-    flywheelState = FlywheelState.STOPPED;
-
-    if (((-0.5 <= flywheelInputs.wheelOneRadSec) && (flywheelInputs.wheelOneRadSec <= 0.5))
-        && ((-0.5 <= flywheelInputs.wheelTwoRadSec) && (flywheelInputs.wheelOneRadSec <= 0.5))) {
-      flywheelState = FlywheelState.STOPPED;
-    } else if (flywheelInputs.wheelOneRadSec <= targetSpeed
-        && flywheelInputs.wheelTwoRadSec <= targetSpeed) {
-      flywheelState = FlywheelState.SPINNING_UP;
-    } else if ((((targetSpeed - 3) <= flywheelInputs.wheelOneRadSec)
-            && (flywheelInputs.wheelOneRadSec <= (targetSpeed + 3)))
-        && (((targetSpeed - 3) <= flywheelInputs.wheelTwoRadSec)
-            && (flywheelInputs.wheelTwoRadSec <= (targetSpeed + 3)))) {
-      flywheelState = FlywheelState.AT_SPEED;
-    } else if (flywheelInputs.wheelOneRadSec >= targetSpeed
-        && flywheelInputs.wheelTwoRadSec >= targetSpeed) {
-      flywheelState = FlywheelState.SPINNING_DOWN;
-    }
-
-    getHolderLimitSwitch().getAsBoolean();
-    getShotLimitSwitch().getAsBoolean();
-
-    if (flywheelState == FlywheelState.STOPPED && getHolderLimitSwitch().getAsBoolean() == false) {
-      shooterState = ShooterState.EMPTY;
-    } else if (flywheelState == FlywheelState.STOPPED
-        && getHolderLimitSwitch().getAsBoolean() == true) {
-      shooterState = ShooterState.LOADED;
-    } else if (flywheelState == FlywheelState.SPINNING_UP
-        && getHolderLimitSwitch().getAsBoolean() == true) {
-      shooterState = ShooterState.ARMING;
-    } else if (flywheelState == FlywheelState.AT_SPEED
-        && getHolderLimitSwitch().getAsBoolean() == true) {
-      shooterState = ShooterState.ARMED;
-    } else if (flywheelState == FlywheelState.AT_SPEED
-        && getShotLimitSwitch().getAsBoolean() == true) {
-      shooterState = ShooterState.SHOOTING;
-    } else if (flywheelState == FlywheelState.SPINNING_DOWN
-        && getHolderLimitSwitch().getAsBoolean() == false) {
-      shooterState = ShooterState.RECOVERING;
-    }
+    frc.robot.RobotState.shooterState = shooterState;
   }
 
-  @Override
-  public void simulationPeriodic() {}
+  private void determineStates() {
+    determineChamberState();
+    determinePusherWheelStates();
+    determineFlywheelState();
+    determineShooterState();
+  }
+
+  private void determineChamberState() {
+    if (getHolderLimitSwitch()) {
+      chamberState = ChamberState.LOADED;
+      return;
+    }
+    if (!getHolderLimitSwitch()) {
+      chamberState = ChamberState.EMPTY;
+      return;
+    }
+    chamberState = ChamberState.UNDEFINED;
+  }
+
+  private void determinePusherWheelStates() {
+    if (Math.abs(shooterInputs.firingMotorAppliedVoltage) > 0) {
+      firingWheelState = FiringWheelState.FIRING;
+      return;
+    }
+
+    if (Math.abs(shooterInputs.firingMotorAppliedVoltage) == 0) {
+      firingWheelState = FiringWheelState.STOPPED;
+      return;
+    }
+    firingWheelState = FiringWheelState.UNDEFINED;
+  }
+
+  private void determineShooterState() {
+    if (flywheelState == FlywheelState.STOPPED && chamberState == ChamberState.EMPTY) {
+      shooterState = ShooterState.EMPTY;
+      return;
+    }
+    if (flywheelState == FlywheelState.STOPPED && chamberState == ChamberState.LOADED) {
+      shooterState = ShooterState.LOADED;
+      return;
+    }
+    if (flywheelState == FlywheelState.SPINNING_UP && chamberState == ChamberState.LOADED) {
+      shooterState = ShooterState.ARMING;
+      return;
+    }
+    if (flywheelState == FlywheelState.AT_SPEED && chamberState == ChamberState.LOADED) {
+      shooterState = ShooterState.ARMED;
+      return;
+    }
+    if (flywheelState == FlywheelState.AT_SPEED && firingWheelState == FiringWheelState.FIRING) {
+      shooterState = ShooterState.SHOOTING;
+      return;
+    }
+    if (flywheelState == FlywheelState.SPINNING_DOWN && chamberState == ChamberState.EMPTY) {
+      shooterState = ShooterState.RECOVERING;
+      return;
+    }
+    if (chamberState == ChamberState.EMPTY && firingWheelState == FiringWheelState.FIRING) {
+      shooterState = ShooterState.LOADING;
+      return;
+    }
+    if (chamberState == ChamberState.LOADED && flywheelState == FlywheelState.SPINNING_DOWN) {
+      shooterState = ShooterState.SAFING;
+    }
+    shooterState = ShooterState.UNDEFINED;
+    return;
+  }
+
+  private void determineFlywheelState() {
+
+    double error = Math.abs(targetSpeed - flywheelInputs.wheelOneRadSec);
+    error =
+        (error > Math.abs(targetSpeed - flywheelInputs.wheelTwoRadSec))
+            ? error
+            : Math.abs(targetSpeed - flywheelInputs.wheelTwoRadSec);
+    boolean errorGreaterThanThreshold = (error > Constants.Shooter.FLYWHEEL_SPEED_THRESHOLD);
+    boolean targetSpeedGreaterThanThreshold =
+        (Math.abs(targetSpeed) > Constants.Shooter.FLYWHEEL_SPEED_THRESHOLD);
+
+    if ((error <= Constants.Shooter.FLYWHEEL_SPEED_THRESHOLD)
+        && (Math.abs(targetSpeed) >= Constants.Shooter.FLYWHEEL_SPEED_THRESHOLD)) {
+      flywheelState = FlywheelState.AT_SPEED;
+      return;
+    }
+
+    if (errorGreaterThanThreshold && targetSpeedGreaterThanThreshold) {
+      flywheelState = FlywheelState.SPINNING_UP;
+      return;
+    }
+
+    if (errorGreaterThanThreshold && !targetSpeedGreaterThanThreshold) {
+      flywheelState = FlywheelState.SPINNING_DOWN;
+      return;
+    }
+
+    if (!errorGreaterThanThreshold && !targetSpeedGreaterThanThreshold) {
+      flywheelState = FlywheelState.STOPPED;
+      return;
+    }
+
+    flywheelState = FlywheelState.UNDEFINED;
+  }
 
   public void setFlywheelSpeeds(double speed) {
     targetSpeed = speed;
@@ -227,11 +303,74 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterIO.setMotorVoltage(voltage);
   }
 
-  public BooleanSupplier getShotLimitSwitch() {
-    return () -> shooterInputs.shotLimitSwitch;
+  public boolean getShotLimitSwitch() {
+    return shooterInputs.shotLimitSwitch;
   }
 
-  public BooleanSupplier getHolderLimitSwitch() {
-    return () -> shooterInputs.holdingLimitSwitch;
+  public boolean getHolderLimitSwitch() {
+    return shooterInputs.holdingLimitSwitch;
+  }
+
+  /* Returns the necesary shooter flywheel speed to shoot at the current target */
+  private double calculateShooterPower(Constants.Targets target) {
+    double distanceToTarget = 0.0;
+    switch (target) {
+      case AMP:
+        break;
+      case OURSIDE:
+        break;
+      case SPEAKER:
+        distanceToTarget = calculateDistanceToCurrentAliianceSpeaker();
+      default:
+        break;
+    }
+    if (!validateShooterTrajectory(distanceToTarget)) {
+      return -1.0;
+    }
+    double noteVelocity = calculateVelocityFromTargetDistance(distanceToTarget);
+    double flywheelVelocity = calculateShooterPowerFromTargetVelocity(noteVelocity);
+
+    Logger.recordOutput("Shooter/currentTarget", target);
+    Logger.recordOutput("Shooter/distanceToTarget", distanceToTarget);
+    Logger.recordOutput("Shooter/targetNoteVelocity", noteVelocity);
+    Logger.recordOutput("Shooter/targetFlywheelVelocity", flywheelVelocity);
+
+    return flywheelVelocity;
+  }
+
+  private double calculateDistanceToCurrentAliianceSpeaker() {
+    return (DriverStation.getAlliance().get() == Alliance.Blue)
+        ? RobotState.robotPose2D
+            .getTranslation()
+            .getDistance(Constants.Field.Blue.SPEAKER_POSE2D.getTranslation())
+        : RobotState.robotPose2D
+            .getTranslation()
+            .getDistance(Constants.Field.Red.SPEAKER_POSE2D.getTranslation());
+  }
+
+  private double calculateVelocityFromTargetDistance(double distanceToTarget) {
+    // TODO: Implement math
+    return 0.0;
+  }
+
+  private double calculateShooterPowerFromTargetVelocity(double noteSpeed) {
+    // TODO: Implement math
+    return 0.0;
+  }
+
+  private boolean validateShooterTrajectory(double distanceToTarget) {
+    return false;
+  }
+
+  public ShooterState getState() {
+    return shooterState;
+  }
+
+  public FlywheelState getFlywheelState() {
+    return flywheelState;
+  }
+
+  public ChamberState getChamberState() {
+    return chamberState;
   }
 }

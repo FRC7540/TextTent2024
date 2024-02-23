@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -115,6 +116,8 @@ public final class Constants {
     public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
     public static final int SHOT_LIMIT_SWITCH_PORT = 2;
 
+    public static final double FLYWHEEL_SPEED_THRESHOLD = 2;
+
     public static enum Direction {
       FORWARD(6.0),
       STOP(0.0),
@@ -185,7 +188,30 @@ public final class Constants {
     public static final double INTAKE_TIME_SECONDS = 1.5;
   }
 
+  public static final class Climber {
+    public static final double EXTENSION_RADIANS = 0.0;
+    public static final double EXTENSION_THRESHOLD = 0.0;
+    public static final double GEAR_RATIO = 1.0;
+    public static final double SPOOL_SIZE_METERS = 1.0;
+  }
+
   public static final class Vision {
     public static final String APRIL_TAG_NETWORKTABLE_TOPIC_NAME = "limelight-april";
+  }
+
+  public static final class Field {
+    public static final class Blue {
+      public static final Pose2d SPEAKER_POSE2D = new Pose2d(-0.0381, 5.547868, new Rotation2d());
+    }
+
+    public static final class Red {
+      public static final Pose2d SPEAKER_POSE2D = new Pose2d(16.579342, 5.547868, new Rotation2d());
+    }
+  }
+
+  public enum Targets {
+    SPEAKER,
+    AMP,
+    OURSIDE;
   }
 }

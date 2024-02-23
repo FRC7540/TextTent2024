@@ -4,5 +4,7 @@ public enum IntakeState {
   EMPTY,
   FULL,
   INTAKING,
-  TRANSFERING;
+  TRANSFERING,
+  EJECTING,
+  UNDEFINED;
 }
