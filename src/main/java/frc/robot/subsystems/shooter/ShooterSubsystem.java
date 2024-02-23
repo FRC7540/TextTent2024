@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Shooter;
+import frc.robot.util.States.FlywheelState;
+import frc.robot.util.States.ShooterState;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoublePredicate;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -25,6 +27,12 @@ public class ShooterSubsystem extends SubsystemBase {
   private final FlywheelIOInputsAutoLogged flywheelInputs = new FlywheelIOInputsAutoLogged();
   private final ShooterIO shooterIO;
   private final ShooterIOInputsAutoLogged shooterInputs = new ShooterIOInputsAutoLogged();
+
+  @AutoLogOutput(key = "Shooter/FlywheelState")
+  private FlywheelState flywheelState;
+
+  @AutoLogOutput(key = "Shooter/ShooterState")
+  private ShooterState shooterState;
 
   public static double optimalRotationSpeed = 100;
 
@@ -138,6 +146,48 @@ public class ShooterSubsystem extends SubsystemBase {
 
     flywheelIO.setWheelOneVoltage(wheelOneloop.getU(0));
     flywheelIO.setWheelTwoVoltage(wheelTwoloop.getU(0));
+
+    // State
+
+    flywheelState = FlywheelState.STOPPED;
+
+    if (((-0.5 <= flywheelInputs.wheelOneRadSec) && (flywheelInputs.wheelOneRadSec <= 0.5))
+        && ((-0.5 <= flywheelInputs.wheelTwoRadSec) && (flywheelInputs.wheelOneRadSec <= 0.5))) {
+      flywheelState = FlywheelState.STOPPED;
+    } else if (flywheelInputs.wheelOneRadSec <= targetSpeed
+        && flywheelInputs.wheelTwoRadSec <= targetSpeed) {
+      flywheelState = FlywheelState.SPINNING_UP;
+    } else if ((((targetSpeed - 3) <= flywheelInputs.wheelOneRadSec)
+            && (flywheelInputs.wheelOneRadSec <= (targetSpeed + 3)))
+        && (((targetSpeed - 3) <= flywheelInputs.wheelTwoRadSec)
+            && (flywheelInputs.wheelTwoRadSec <= (targetSpeed + 3)))) {
+      flywheelState = FlywheelState.AT_SPEED;
+    } else if (flywheelInputs.wheelOneRadSec >= targetSpeed
+        && flywheelInputs.wheelTwoRadSec >= targetSpeed) {
+      flywheelState = FlywheelState.SPINNING_DOWN;
+    }
+
+    getHolderLimitSwitch().getAsBoolean();
+    getShotLimitSwitch().getAsBoolean();
+
+    if (flywheelState == FlywheelState.STOPPED && getHolderLimitSwitch().getAsBoolean() == false) {
+      shooterState = ShooterState.EMPTY;
+    } else if (flywheelState == FlywheelState.STOPPED
+        && getHolderLimitSwitch().getAsBoolean() == true) {
+      shooterState = ShooterState.LOADED;
+    } else if (flywheelState == FlywheelState.SPINNING_UP
+        && getHolderLimitSwitch().getAsBoolean() == true) {
+      shooterState = ShooterState.ARMING;
+    } else if (flywheelState == FlywheelState.AT_SPEED
+        && getHolderLimitSwitch().getAsBoolean() == true) {
+      shooterState = ShooterState.ARMED;
+    } else if (flywheelState == FlywheelState.AT_SPEED
+        && getShotLimitSwitch().getAsBoolean() == true) {
+      shooterState = ShooterState.SHOOTING;
+    } else if (flywheelState == FlywheelState.SPINNING_DOWN
+        && getHolderLimitSwitch().getAsBoolean() == false) {
+      shooterState = ShooterState.RECOVERING;
+    }
   }
 
   @Override
