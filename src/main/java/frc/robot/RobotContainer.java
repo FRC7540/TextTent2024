@@ -12,18 +12,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DefaultDrive;
+import frc.robot.commands.intake.IntakeNote;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIONavX;
 import frc.robot.subsystems.drivebase.ModuleIO;
 import frc.robot.subsystems.drivebase.ModuleIOSim;
 import frc.robot.subsystems.drivebase.ModuleIOSparkMax;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.FlywheelIO;
 import frc.robot.subsystems.shooter.FlywheelIOSim;
 import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
 import frc.robot.subsystems.vison.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -41,6 +47,7 @@ public class RobotContainer {
 
   private ShooterSubsystem shooterSubsystem;
   private DrivebaseSubsystem drivebaseSubsystem;
+  private IntakeSubsystem intakeSubsystem;
   private VisionSubsystem visionSubsystem;
 
   public CommandXboxController operatorController =
@@ -55,59 +62,12 @@ public class RobotContainer {
   LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
   public RobotContainer() {
-    // Instantiate subsystems
-    // Simulation
     if (Robot.isSimulation() && !Robot.isReplay) {
-      // We are in a simulation, instantiate simulation classes
-
-      System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
-      shooterSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIOSim());
-
-      drivebaseSubsystem =
-          new DrivebaseSubsystem(
-              new GyroIO() {},
-              new ModuleIOSim() {},
-              new ModuleIOSim() {},
-              new ModuleIOSim() {},
-              new ModuleIOSim() {});
-      visionSubsystem = new VisionSubsystem(new VisionIO() {});
-
+      setupForSimulation();
     } else if (Robot.isReal()) {
-      // We are on a real robot, instantiate hardware classes
-      System.out.println("Real robot detected!");
-
-      // Only create the real IO layer if we need to
-      shooterSubsystem =
-          Preferences.getBoolean("flywheelReal", Constants.Flags.USE_REAL_FLYWHEEL_HARDWARE)
-              ? new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {})
-              : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
-
-      drivebaseSubsystem =
-          new DrivebaseSubsystem(
-              new GyroIONavX(),
-              new ModuleIOSparkMax(0) {},
-              new ModuleIOSparkMax(1) {},
-              new ModuleIOSparkMax(2) {},
-              new ModuleIOSparkMax(3) {});
+      setupForRealRobot();
     }
-
-    // Instantiate missing subsystems
-
-    shooterSubsystem =
-        shooterSubsystem != null
-            ? shooterSubsystem
-            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
-    drivebaseSubsystem =
-        drivebaseSubsystem != null
-            ? drivebaseSubsystem
-            : new DrivebaseSubsystem(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-    visionSubsystem =
-        visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
+    fillMissingSubsystems();
 
     registerVisionConsumers();
     configureDefaultCommands();
@@ -128,6 +88,8 @@ public class RobotContainer {
         .debounce(0.2)
         .onTrue(
             new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+
+    operatorController.x().debounce(0.02).onTrue(new IntakeNote(intakeSubsystem));
 
     driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
     driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
@@ -163,5 +125,64 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  private void setupForRealRobot() {
+    System.out.println("Real robot detected!");
+
+    // Only create the real IO layer if we need to
+    shooterSubsystem =
+        Preferences.getBoolean("flywheelReal", Constants.Flags.USE_REAL_FLYWHEEL_HARDWARE)
+            ? new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {})
+            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+
+    drivebaseSubsystem =
+        new DrivebaseSubsystem(
+            new GyroIONavX(),
+            new ModuleIOSparkMax(0) {},
+            new ModuleIOSparkMax(1) {},
+            new ModuleIOSparkMax(2) {},
+            new ModuleIOSparkMax(3) {});
+
+    visionSubsystem = new VisionSubsystem(new LimelightIO());
+
+    intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
+  }
+
+  private void setupForSimulation() {
+
+    System.out.println("Simulation detected! Not set to replay, instantiang simulations.");
+    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSim(), new ShooterIOSim());
+
+    drivebaseSubsystem =
+        new DrivebaseSubsystem(
+            new GyroIO() {},
+            new ModuleIOSim() {},
+            new ModuleIOSim() {},
+            new ModuleIOSim() {},
+            new ModuleIOSim() {});
+    visionSubsystem = new VisionSubsystem(new VisionIO() {});
+
+    intakeSubsystem = new IntakeSubsystem(new IntakeIOSim());
+  }
+
+  private void fillMissingSubsystems() {
+    shooterSubsystem =
+        shooterSubsystem != null
+            ? shooterSubsystem
+            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+    drivebaseSubsystem =
+        drivebaseSubsystem != null
+            ? drivebaseSubsystem
+            : new DrivebaseSubsystem(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+    visionSubsystem =
+        visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
+    intakeSubsystem =
+        intakeSubsystem != null ? intakeSubsystem : new IntakeSubsystem(new IntakeIO() {});
   }
 }
