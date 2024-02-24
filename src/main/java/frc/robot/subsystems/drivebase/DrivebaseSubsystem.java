@@ -166,6 +166,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
 
     // Apply odometry update
     poseEstimator.update(rawGyroRotation, modulePositions);
+    frc.robot.RobotState.robotPose2D = poseEstimator.getEstimatedPosition();
 
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
@@ -208,6 +209,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
       runVelocity(speeds);
     }
   }
+
+  public void driveRotation(double radians) {}
 
   /** Stops the drive. */
   public void stop() {
@@ -266,6 +269,11 @@ public class DrivebaseSubsystem extends SubsystemBase {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  /** Returns the current odometry rotation. */
+  public double getRotationRadians() {
+    return getPose().getRotation().getRadians();
   }
 
   /** Resets the current odometry pose. */

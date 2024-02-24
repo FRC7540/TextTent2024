@@ -5,20 +5,38 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.robot.util.States.FlywheelState;
+import frc.robot.util.States.ClimberState;
+import frc.robot.util.States.IntakeState;
 import frc.robot.util.States.RobotNoteState;
 import frc.robot.util.States.ShooterState;
+import org.littletonrobotics.junction.Logger;
 
 public class RobotState {
   public static Pose2d robotPose2D;
   public static Pose3d robotPose3D;
   public static ShooterState shooterState;
-  public static FlywheelState flywheelState;
+  public static IntakeState intakeState;
+  public static ClimberState climberState;
   public static RobotNoteState robotNoteState;
+  public static Pose2d noteTargetPose;
 
-  public RobotState() {
+  static {
+    robotPose2D = new Pose2d();
+    robotPose3D = new Pose3d();
     shooterState = ShooterState.UNDEFINED;
-    flywheelState = FlywheelState.UNDEFINED;
+    intakeState = IntakeState.UNDEFINED;
+    climberState = ClimberState.UNDEFINED;
     robotNoteState = RobotNoteState.UNDEFINED;
+    noteTargetPose = new Pose2d();
+  }
+
+  public static void pushUpdate() {
+    Logger.recordOutput("RobotState/robotPose2D", robotPose2D);
+    Logger.recordOutput("RobotState/robotPose3D", robotPose3D);
+    Logger.recordOutput("RobotState/shooterState", shooterState);
+    Logger.recordOutput("RobotState/intakeState", intakeState);
+    Logger.recordOutput("RobotState/climberState", climberState);
+    Logger.recordOutput("RobotState/robotNoteState", robotNoteState);
+    Logger.recordOutput("RobotState/noteTargetPose", noteTargetPose);
   }
 }

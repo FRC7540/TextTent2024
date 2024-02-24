@@ -135,6 +135,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
+    RobotState.pushUpdate();
   }
 
   /** This function is called once when autonomous is enabled. */

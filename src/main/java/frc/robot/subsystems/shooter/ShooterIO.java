@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterIO {
   @AutoLog
   public static class ShooterIOInputs {
-    public double pusherMotorAppliedVoltage = 0.0;
+    public double firingMotorAppliedVoltage = 0.0;
     public boolean holdingLimitSwitch = false;
     public boolean shotLimitSwitch = false;
   }

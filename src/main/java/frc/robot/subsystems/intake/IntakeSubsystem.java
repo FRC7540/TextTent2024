@@ -2,36 +2,57 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.States.IntakeState;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private IntakeState state;
+
+  @AutoLogOutput(key = "Intake/State")
+  private IntakeState intakeState;
 
   public IntakeSubsystem(IntakeIO io) {
     this.io = io;
-    state = IntakeState.EMPTY;
+    intakeState = IntakeState.EMPTY;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-
-    if (!getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() == 0)) {
-      state = IntakeState.EMPTY;
-    } else if (!getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() > 0)) {
-      state = IntakeState.INTAKING;
-    } else if (getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() == 0)) {
-      state = IntakeState.FULL;
-    } else if (getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() > 0)) {
-      state = IntakeState.TRANSFERING;
-    }
+    determineIntakeState();
+    frc.robot.RobotState.intakeState = intakeState;
   }
 
-  @Override
-  public void simulationPeriodic() {}
+  private void determineIntakeState() {
+    if (!getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() == 0)) {
+      intakeState = IntakeState.EMPTY;
+      return;
+    }
+
+    if (!getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() > 0)) {
+      intakeState = IntakeState.INTAKING;
+      return;
+    }
+
+    if (getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() == 0)) {
+      intakeState = IntakeState.FULL;
+      return;
+    }
+
+    if (getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() > 0)) {
+      intakeState = IntakeState.TRANSFERING;
+      return;
+    }
+
+    if (getIntakeNoteLimitSwitch() && (getIntakeMotorVoltage() < 0)) {
+      intakeState = IntakeState.EJECTING;
+      return;
+    }
+
+    intakeState = IntakeState.UNDEFINED;
+  }
 
   public void setMotorVoltage(double voltage) {
     io.setVoltage(voltage);
@@ -43,5 +64,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double getIntakeMotorVoltage() {
     return inputs.intakeMotorVoltage;
+  }
+
+  public IntakeState getState() {
+    return intakeState;
   }
 }
