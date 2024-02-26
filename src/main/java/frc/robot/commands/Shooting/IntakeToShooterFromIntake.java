@@ -6,12 +6,12 @@ import frc.robot.Constants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.util.States.ShooterState;
 
-public class ShooterRecivePieceFromIntake extends Command {
+public class IntakeToShooterFromIntake extends Command {
   private final ShooterSubsystem shooterSubsystem;
 
   public Timer transferingTimer = new Timer();
 
-  public ShooterRecivePieceFromIntake(ShooterSubsystem shooterSubsystem) {
+  public IntakeToShooterFromIntake(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);
   }
