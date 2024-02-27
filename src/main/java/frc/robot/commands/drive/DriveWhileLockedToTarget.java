@@ -35,14 +35,14 @@ public class DriveWhileLockedToTarget extends Command {
     this.yJoystickDoubleSupplier = yJoystickDoubleSupplier;
     this.scalar = scalarInputDoubleSupplier;
 
-    pidController = new PIDController(0, 0, 0);
+    pidController = new PIDController(0.5, 0, 0);
     pidController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(drivebaseSubsystem);
   }
 
   @Override
   public void execute() {
-    drivebaseSubsystem.runVelocity(calculateChassisSpeeds());
+    drivebaseSubsystem.drivejoysticks((calculateChassisSpeeds()), true);
   }
 
   public ChassisSpeeds calculateChassisSpeeds() {
