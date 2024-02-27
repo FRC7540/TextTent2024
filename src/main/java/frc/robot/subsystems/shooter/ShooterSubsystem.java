@@ -359,6 +359,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private boolean validateShooterTrajectory(double distanceToTarget) {
+    // TODO: Iplement math
     return false;
   }
 
