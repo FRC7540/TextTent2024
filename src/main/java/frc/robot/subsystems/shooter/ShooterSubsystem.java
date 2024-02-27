@@ -358,9 +358,14 @@ public class ShooterSubsystem extends SubsystemBase {
     return 0.0;
   }
 
-  private boolean validateShooterTrajectory(double distanceToTarget) {
-    // TODO: Iplement math
-    return false;
+  private boolean validateShooterTrajectory(double noteVelocity) {
+    return calculateNoteMaximumHeight(noteVelocity) < Constants.Shooter.NOTE_MAXIMUM_HEIGHT_METERS;
+  }
+
+  private double calculateNoteMaximumHeight(double noteVelocity) {
+    return (Math.pow(noteVelocity, 2)
+            * Math.pow(Math.sin(Constants.Shooter.SHOOTER_ANGLE_RADIANS), 2))
+        / (2 * Math.abs(-9.80665));
   }
 
   public ShooterState getState() {

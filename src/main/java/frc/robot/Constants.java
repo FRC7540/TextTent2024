@@ -118,6 +118,10 @@ public final class Constants {
 
     public static final double FLYWHEEL_SPEED_THRESHOLD = 2;
 
+    public static final double SHOOTER_ANGLE_RADIANS = 1;
+
+    public static final double NOTE_MAXIMUM_HEIGHT_METERS = 69;
+
     public static enum Direction {
       FORWARD(6.0),
       STOP(0.0),
