@@ -22,7 +22,7 @@ public class LimelightIO implements VisionIO {
   private int currentPipeline = -1;
 
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  NetworkTable limelight = inst.getTable("limelight");
+  NetworkTable limelight = inst.getTable("limelight-april");
 
   private final IntegerEntry pipelineEntry;
   private final DoubleArraySubscriber selfBotPoseSubscriber;

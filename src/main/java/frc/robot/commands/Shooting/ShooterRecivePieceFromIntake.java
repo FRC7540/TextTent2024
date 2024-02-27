@@ -8,11 +8,13 @@ import frc.robot.util.States.ShooterState;
 
 public class ShooterRecivePieceFromIntake extends Command {
   private final ShooterSubsystem shooterSubsystem;
+  private boolean cancelNow;
 
   public Timer transferingTimer = new Timer();
 
   public ShooterRecivePieceFromIntake(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
+    this.cancelNow = false;
     addRequirements(shooterSubsystem);
   }
 
@@ -20,7 +22,7 @@ public class ShooterRecivePieceFromIntake extends Command {
   public void initialize() {
     if (shooterSubsystem.getState() != ShooterState.EMPTY
         || shooterSubsystem.getState() != ShooterState.RECOVERING) {
-      this.cancel();
+      this.cancelNow = true;
     }
     shooterSubsystem.setPusherVoltage(Constants.Shooter.Direction.FORWARD.getVoltage());
     transferingTimer.start();
@@ -28,18 +30,19 @@ public class ShooterRecivePieceFromIntake extends Command {
 
   @Override
   public void execute() {
-    if (transferingTimer.hasElapsed(0)) {
-      this.cancel();
+    if (transferingTimer.hasElapsed(5)) {
+      this.cancelNow = true;
     }
   }
 
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.setPusherVoltage(Constants.Shooter.Direction.STOP.getVoltage());
+    this.cancelNow = false;
   }
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getState() == ShooterState.LOADED;
+    return shooterSubsystem.getState() == ShooterState.LOADED || this.cancelNow == true;
   }
 }

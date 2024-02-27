@@ -152,7 +152,7 @@ public class RobotContainer {
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
 
-    climberSubsystem = new ClimberSubsystem(null);
+    climberSubsystem = new ClimberSubsystem(new ClimberIO() {});
   }
 
   private void setupForSimulation() {
