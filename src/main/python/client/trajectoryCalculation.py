@@ -14,7 +14,9 @@ def main() -> None:
     inst.startDSClient()
 
     while True:
-        time.sleep(1)
+        time.sleep(0.02)
+        
+        print("polling")
 
         distanceToTarget = distanceToTargetSub.get()
 
@@ -26,8 +28,6 @@ def main() -> None:
         flywheelSpeedsSuppliter.set(flywheelVelocity)
         
 
-if __name__ == "__main__":
-    main()
 
 
 def calculateShooterPowerFromDistance(distance: float) -> float:
@@ -35,3 +35,6 @@ def calculateShooterPowerFromDistance(distance: float) -> float:
 
 def calculateFlywheelSpeedsFromShooterPower(noteVelocity: float) -> float:
     return noteVelocity
+
+if __name__ == "__main__":
+    main()
