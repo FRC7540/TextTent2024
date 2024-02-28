@@ -19,8 +19,10 @@ public class RobotState {
   public static ClimberState climberState;
   public static RobotNoteState robotNoteState;
   public static Pose2d noteTargetPose;
+  public static Pose3d botVisionPose;
 
   static {
+    botVisionPose = new Pose3d();
     robotPose2D = new Pose2d();
     robotPose3D = new Pose3d();
     shooterState = ShooterState.UNDEFINED;

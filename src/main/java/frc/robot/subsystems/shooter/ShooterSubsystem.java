@@ -12,6 +12,10 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -23,6 +27,7 @@ import frc.robot.util.States.ChamberState;
 import frc.robot.util.States.FiringWheelState;
 import frc.robot.util.States.FlywheelState;
 import frc.robot.util.States.ShooterState;
+import java.util.Map;
 import java.util.function.DoublePredicate;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -113,6 +118,13 @@ public class ShooterSubsystem extends SubsystemBase {
           Shooter.Flywheel.WheelTwo.MAX_VOLTAGE,
           Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
+  ShuffleboardLayout shooterLayoute =
+      Shuffleboard.getTab("Main")
+          .getLayout("Shooter", BuiltInLayouts.kGrid)
+          .withPosition(0, 0)
+          .withSize(3, 3)
+          .withProperties(null);
+
   public ShooterSubsystem(FlywheelIO flywheelIO, ShooterIO shooterIO) {
     this.flywheelIO = flywheelIO;
     this.shooterIO = shooterIO;
@@ -129,6 +141,33 @@ public class ShooterSubsystem extends SubsystemBase {
                 },
                 null,
                 this));
+    shooterLayoute
+        .addDouble("Flywheel 1", () -> flywheelInputs.wheelOneRadSec)
+        .withWidget(BuiltInWidgets.kDial)
+        .withSize(1, 1)
+        .withPosition(0, 0)
+        .withProperties(Map.of("min", 0, "max", 40));
+
+    shooterLayoute
+        .addDouble("Flywheel 2", () -> flywheelInputs.wheelTwoRadSec)
+        .withWidget(BuiltInWidgets.kDial)
+        .withSize(1, 1)
+        .withPosition(1, 0)
+        .withProperties(Map.of("min", 0, "max", 40));
+
+    shooterLayoute
+        .addDouble("Target Speed", () -> targetSpeed)
+        .withWidget(BuiltInWidgets.kDial)
+        .withSize(1, 1)
+        .withPosition(0, 1)
+        .withProperties(Map.of("min", 0, "max", 40));
+
+    shooterState = ShooterState.UNDEFINED;
+    shooterLayoute
+        .addString("shooterState", shooterState::toString)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(1, 1);
   }
 
   @Override

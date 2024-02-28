@@ -6,10 +6,15 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -70,6 +75,20 @@ public class RobotContainer {
   LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
   LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
+  ShuffleboardLayout robotPosesLayoute =
+      Shuffleboard.getTab("Main")
+          .getLayout("Robot Poses", BuiltInLayouts.kList)
+          .withPosition(3, 0)
+          .withSize(1, 2)
+          .withProperties(null);
+
+  ShuffleboardLayout warningLightsLayoute =
+      Shuffleboard.getTab("Main")
+          .getLayout("Warning Lights", BuiltInLayouts.kGrid)
+          .withPosition(4, 0)
+          .withSize(3, 3)
+          .withProperties(null);
+
   public RobotContainer() {
     if (Robot.isSimulation() && !Robot.isReplay) {
       setupForSimulation();
@@ -81,6 +100,92 @@ public class RobotContainer {
     registerVisionConsumers();
     configureDefaultCommands();
     configureBindings();
+
+    robotPosesLayoute
+        .addString(
+            "BotPose",
+            () ->
+                ("X:"
+                    + RobotState.robotPose2D.getX()
+                    + " "
+                    + "Y:"
+                    + RobotState.robotPose2D.getY()
+                    + " "
+                    + "T:"
+                    + RobotState.robotPose2D.getRotation().getRadians()))
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(1, 0);
+
+    robotPosesLayoute
+        .addString(
+            "VisionPose",
+            () ->
+                ("X:"
+                    + RobotState.botVisionPose.getX()
+                    + " "
+                    + "Y:"
+                    + RobotState.botVisionPose.getY()
+                    + " "
+                    + "T:"
+                    + RobotState.botVisionPose.toPose2d().getRotation().getRadians()))
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(2, 0);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 1", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(0, 0);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 2", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(1, 0);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 3", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(2, 0);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 4", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(0, 1);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 5", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(1, 1);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 6", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(2, 1);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 7", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(0, 2);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 8", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(1, 2);
+
+    warningLightsLayoute
+        .addBoolean("Boolean 9", () -> true)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(2, 2);
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
   }
@@ -136,6 +241,10 @@ public class RobotContainer {
 
   private void registerVisionConsumers() {
     visionSubsystem.registerBotPoseConsumer(drivebaseSubsystem::addVisionMeasurement);
+    visionSubsystem.registerBotPoseConsumer(
+        (Pose3d pose, Double timestamp) -> {
+          RobotState.botVisionPose = pose;
+        });
   }
 
   public void initPathPlanner() {}
