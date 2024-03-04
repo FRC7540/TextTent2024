@@ -18,13 +18,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
-import frc.robot.commands.TransferNoteFromIntakeToShooter;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.drive.DriveWhileLockedToTarget;
-import frc.robot.commands.intake.IntakeNote;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -155,18 +153,15 @@ public class RobotContainer {
     operatorController
         .a()
         .debounce(0.2)
-        .onTrue(
-            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+        .onTrue(new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> flywheelSpeedInput.get()));
 
     operatorController
-        .b()
-        .debounce(0.2)
-        .onTrue(new TransferNoteFromIntakeToShooter(intakeSubsystem, shooterSubsystem));
-
-    operatorController.x().debounce(0.02).onTrue(new IntakeNote(intakeSubsystem));
+        .x()
+        .debounce(0.02)
+        .onTrue(new frc.robot.commands.IntakeNote(intakeSubsystem, shooterSubsystem));
 
     operatorController
-        .y()
+        .rightTrigger()
         .debounce(0.2)
         .onTrue(new ShootNote(shooterSubsystem, () -> flywheelSpeedInput.get()));
 

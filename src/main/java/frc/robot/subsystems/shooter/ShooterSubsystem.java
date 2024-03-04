@@ -269,6 +269,11 @@ public class ShooterSubsystem extends SubsystemBase {
     if (chamberState == ChamberState.LOADED && flywheelState == FlywheelState.SPINNING_DOWN) {
       shooterState = ShooterState.SAFING;
     }
+    if (chamberState == ChamberState.LOADED
+        && firingWheelState == FiringWheelState.FIRING
+        && flywheelState == FlywheelState.STOPPED) {
+      shooterState = ShooterState.LOADED;
+    }
     shooterState = ShooterState.UNDEFINED;
     return;
   }
