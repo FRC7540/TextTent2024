@@ -23,6 +23,7 @@ public class IntakeNote extends Command {
   public void initialize() {
     if (shooterSubsystem.getState() != ShooterState.EMPTY) {
       this.endNow = true;
+      return;
     }
 
     intakingTimer.start();
