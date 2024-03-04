@@ -118,8 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
           Shooter.Flywheel.WheelTwo.MAX_VOLTAGE,
           Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP);
 
-  ShuffleboardLayout shooterLayoute =
-      Shuffleboard.getTab("Main")
+  ShuffleboardLayout shooterLayout =
+      Shuffleboard.getTab("Teleop")
           .getLayout("Shooter", BuiltInLayouts.kGrid)
           .withPosition(0, 0)
           .withSize(3, 3)
@@ -141,21 +141,21 @@ public class ShooterSubsystem extends SubsystemBase {
                 },
                 null,
                 this));
-    shooterLayoute
+    shooterLayout
         .addDouble("Flywheel 1", () -> flywheelInputs.wheelOneRadSec)
         .withWidget(BuiltInWidgets.kDial)
         .withSize(1, 1)
         .withPosition(0, 0)
         .withProperties(Map.of("min", 0, "max", 40));
 
-    shooterLayoute
+    shooterLayout
         .addDouble("Flywheel 2", () -> flywheelInputs.wheelTwoRadSec)
         .withWidget(BuiltInWidgets.kDial)
         .withSize(1, 1)
         .withPosition(1, 0)
         .withProperties(Map.of("min", 0, "max", 40));
 
-    shooterLayoute
+    shooterLayout
         .addDouble("Target Speed", () -> targetSpeed)
         .withWidget(BuiltInWidgets.kDial)
         .withSize(1, 1)
@@ -163,7 +163,7 @@ public class ShooterSubsystem extends SubsystemBase {
         .withProperties(Map.of("min", 0, "max", 40));
 
     shooterState = ShooterState.UNDEFINED;
-    shooterLayoute
+    shooterLayout
         .addString("shooterState", shooterState::toString)
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)

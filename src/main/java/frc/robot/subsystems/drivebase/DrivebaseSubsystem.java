@@ -29,8 +29,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -71,7 +71,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
     // dashboard stuff
-    SmartDashboard.putData("Field", field);
+    Shuffleboard.getTab("Teleop").add(field).withPosition(4, 0).withSize(7, 5);
+    Shuffleboard.getTab("Auto").add(field).withPosition(2, 0).withSize(10, 8);
 
     poseEstimator =
         new SwerveDrivePoseEstimator(

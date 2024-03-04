@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -77,33 +79,7 @@ public class RobotContainer {
   LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
   LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
-  ShuffleboardLayout robotPosesLayoute =
-      Shuffleboard.getTab("Main")
-          .getLayout("Robot Poses", BuiltInLayouts.kList)
-          .withPosition(3, 0)
-          .withSize(1, 2)
-          .withProperties(null);
-
-  ShuffleboardLayout warningLightsLayoute =
-      Shuffleboard.getTab("Main")
-          .getLayout("Warning Lights", BuiltInLayouts.kGrid)
-          .withPosition(0, 3)
-          .withSize(1, 2)
-          .withProperties(null);
-
-  ShuffleboardLayout autoSetupLayoute =
-      Shuffleboard.getTab("Setup")
-          .getLayout("Auto Setup", BuiltInLayouts.kGrid)
-          .withPosition(0, 0)
-          .withSize(3, 3)
-          .withProperties(null);
-
-  ShuffleboardLayout xSetupLayoute =
-      Shuffleboard.getTab("Setup")
-          .getLayout("x", BuiltInLayouts.kList)
-          .withPosition(3, 0)
-          .withSize(2, 2)
-          .withProperties(null);
+  PowerDistribution powerDistribution = new PowerDistribution();
 
   public RobotContainer() {
     if (Robot.isSimulation() && !Robot.isReplay) {
@@ -117,84 +93,62 @@ public class RobotContainer {
     configureDefaultCommands();
     configureBindings();
 
-    robotPosesLayoute
-        .addString(
-            "BotPose",
-            () ->
-                ("X:"
-                    + RobotState.robotPose2D.getX()
-                    + " "
-                    + "Y:"
-                    + RobotState.robotPose2D.getY()
-                    + " "
-                    + "T:"
-                    + RobotState.robotPose2D.getRotation().getRadians()))
-        .withWidget(BuiltInWidgets.kTextView)
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    DriverStation.silenceJoystickConnectionWarning(true);
+    setupDashboard();
+  }
+
+  private void setupDashboard() {
+    LiveWindow.disableAllTelemetry();
+
+    ShuffleboardLayout warningLightsLayout =
+        Shuffleboard.getTab("Teleop")
+            .getLayout("Warning Lights", BuiltInLayouts.kGrid)
+            .withPosition(0, 5)
+            .withSize(5, 2)
+            .withProperties(null);
+
+    warningLightsLayout
+        .addBoolean("Boolean 1", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(0, 0);
+
+    warningLightsLayout
+        .addBoolean("Boolean 2", () -> false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
         .withSize(1, 1)
         .withPosition(1, 0);
 
-    robotPosesLayoute
-        .addString(
-            "VisionPose",
-            () ->
-                ("X:"
-                    + RobotState.botVisionPose.getX()
-                    + " "
-                    + "Y:"
-                    + RobotState.botVisionPose.getY()
-                    + " "
-                    + "T:"
-                    + RobotState.botVisionPose.toPose2d().getRotation().getRadians()))
-        .withWidget(BuiltInWidgets.kTextView)
-        .withSize(0, 1)
-        .withPosition(2, 0);
-
-    warningLightsLayoute
-        .addBoolean("Boolean 1", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
-
-    warningLightsLayoute
-        .addBoolean("Boolean 2", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
-
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 3", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
+        .withSize(1, 2)
+        .withPosition(2, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 4", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
+        .withSize(1, 2)
+        .withPosition(3, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 5", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
+        .withSize(1, 2)
+        .withPosition(4, 0);
 
-    warningLightsLayoute
-        .addBoolean("Boolean 6", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(0, 2);
+    Shuffleboard.getTab("Teleop")
+        .add("Total Current draw", powerDistribution.getTotalCurrent())
+        .withPosition(5, 5)
+        .withSize(3, 2)
+        .withWidget(BuiltInWidgets.kDial);
 
-    // warningLightsLayoute
-    // .addBoolean("Boolean 7", () -> false)
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    // .withSize(0, 2);
-
-    // warningLightsLayoute
-    // .addBoolean("Boolean 8", () -> false)
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    // .withSize(0, 2);
-
-    // warningLightsLayoute
-    //  .addBoolean("Boolean 9", () -> true)
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    //  .withSize(0, 2);
-
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    Shuffleboard.getTab("Auto")
+        .add("Selected Auto", autoChooser.getSendableChooser())
+        .withPosition(0, 0)
+        .withSize(2, 2);
   }
 
   private void configureBindings() {
@@ -246,6 +200,7 @@ public class RobotContainer {
                 driverController::getLeftX,
                 driverController::getRightX,
                 driverController::getLeftTriggerAxis,
+                () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
                 drivebaseSubsystem),
             driverController.b()));
   }
