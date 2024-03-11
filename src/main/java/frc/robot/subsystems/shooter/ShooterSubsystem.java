@@ -250,7 +250,9 @@ public class ShooterSubsystem extends SubsystemBase {
       shooterState = ShooterState.ARMING;
       return;
     }
-    if (flywheelState == FlywheelState.AT_SPEED && chamberState == ChamberState.LOADED) {
+    if (flywheelState == FlywheelState.AT_SPEED
+        && chamberState == ChamberState.LOADED
+        && !(firingWheelState == FiringWheelState.FIRING)) {
       shooterState = ShooterState.ARMED;
       return;
     }
@@ -262,7 +264,9 @@ public class ShooterSubsystem extends SubsystemBase {
       shooterState = ShooterState.RECOVERING;
       return;
     }
-    if (chamberState == ChamberState.EMPTY && firingWheelState == FiringWheelState.FIRING) {
+    if (chamberState == ChamberState.EMPTY
+        && firingWheelState == FiringWheelState.FIRING
+        && flywheelState == FlywheelState.STOPPED) {
       shooterState = ShooterState.LOADING;
       return;
     }

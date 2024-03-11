@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
@@ -99,6 +98,10 @@ public class RobotContainer {
 
   private void setupDashboard() {
     LiveWindow.disableAllTelemetry();
+    configureShuffleBoard();
+  }
+
+  private void configureShuffleBoard() {
 
     ShuffleboardLayout warningLightsLayout =
         Shuffleboard.getTab("Teleop")
@@ -149,7 +152,25 @@ public class RobotContainer {
         .withSize(2, 2);
   }
 
+  private void configureDefaultCommands() {
+
+    drivebaseSubsystem.setDefaultCommand(
+        new DefaultDrive(
+            driverController::getLeftY,
+            driverController::getLeftX,
+            driverController::getRightX,
+            driverController::getLeftTriggerAxis,
+            () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
+            drivebaseSubsystem));
+  }
+
   private void configureBindings() {
+    Supplier<Pose2d> currentSpeak =
+        () ->
+            DriverStation.getAlliance().get() == Alliance.Blue
+                ? Constants.Field.Blue.SPEAKER_POSE2D
+                : Constants.Field.Red.SPEAKER_POSE2D;
+
     operatorController
         .a()
         .debounce(0.2)
@@ -174,30 +195,17 @@ public class RobotContainer {
             AutoBuilder.pathfindToPose(
                 new Pose2d(pathFindX.get(), pathFindY.get(), new Rotation2d(pathFindTheta.get())),
                 Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
-  }
 
-  private void configureDefaultCommands() {
-    Supplier<Pose2d> currentSpeak =
-        () ->
-            DriverStation.getAlliance().get() == Alliance.Blue
-                ? Constants.Field.Blue.SPEAKER_POSE2D
-                : Constants.Field.Red.SPEAKER_POSE2D;
-    drivebaseSubsystem.setDefaultCommand(
-        new ConditionalCommand(
+    driverController
+        .a()
+        .debounce(0.2)
+        .onTrue(
             new DriveWhileLockedToTarget(
                 currentSpeak,
                 driverController::getLeftX,
                 driverController::getLeftY,
                 driverController::getLeftTriggerAxis,
-                drivebaseSubsystem),
-            new DefaultDrive(
-                driverController::getLeftY,
-                driverController::getLeftX,
-                driverController::getRightX,
-                driverController::getLeftTriggerAxis,
-                () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
-                drivebaseSubsystem),
-            driverController.b()));
+                drivebaseSubsystem));
   }
 
   private void registerVisionConsumers() {

@@ -28,6 +28,7 @@ public class ShotPush extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getState() == ShooterState.RECOVERING;
+    return shooterSubsystem.getState() != ShooterState.ARMED
+        || shooterSubsystem.getState() != ShooterState.SHOOTING;
   }
 }

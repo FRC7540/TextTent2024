@@ -1,6 +1,8 @@
 package frc.robot.subsystems.vison;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -17,6 +19,7 @@ import org.littletonrobotics.junction.Logger;
 public class LimelightIO implements VisionIO {
   private double captureTimestamp = 0.0;
   private Pose3d targetPoseRobotSpace = new Pose3d();
+  private Pose2d robotPose2d = new Pose2d();
   private Pose3d selfBotPose3d = new Pose3d();
   private boolean validEntry = false;
   private int currentPipeline = -1;
@@ -65,6 +68,12 @@ public class LimelightIO implements VisionIO {
                         Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[3]),
                         Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[4]),
                         Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[5])));
+            robotPose2d =
+                new Pose2d(
+                    targetPoseRobotSpaceSubscriber.get()[0],
+                    targetPoseRobotSpaceSubscriber.get()[1],
+                    new Rotation2d(
+                        Units.degreesToRadians(targetPoseRobotSpaceSubscriber.get()[5])));
             validEntry = validEntrySubscriber.get() == 1.0;
             currentPipeline = (int) pipelineEntry.get();
           }
@@ -78,6 +87,7 @@ public class LimelightIO implements VisionIO {
     inputs.validEntry = validEntry;
     inputs.selfPoseFieldSpace = selfBotPose3d;
     inputs.targetPoseRobotSpace = targetPoseRobotSpace;
+    inputs.robotPose2d = robotPose2d;
   }
 
   @Override
