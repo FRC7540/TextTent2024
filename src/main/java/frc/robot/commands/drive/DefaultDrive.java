@@ -6,8 +6,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.networktables.LoggedDashboardBoolean;
 
 public class DefaultDrive extends Command {
   private final DrivebaseSubsystem drivebaseSubsystem;
@@ -15,7 +15,7 @@ public class DefaultDrive extends Command {
   private final DoubleSupplier yJoystickDoubleSupplier;
   private final DoubleSupplier thetaJoystickDoubleSupplier;
   private final DoubleSupplier sclaerInputDoubleSupplier;
-  private final LoggedDashboardBoolean feildOriented;
+  private final BooleanSupplier feildOriented;
 
   private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(1);
   private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(1);
@@ -26,14 +26,15 @@ public class DefaultDrive extends Command {
       DoubleSupplier directionY,
       DoubleSupplier rotation,
       DoubleSupplier scalar,
+      BooleanSupplier feildOriented,
       DrivebaseSubsystem drivebaseSubsystem) {
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.xJoystickDoubleSupplier = directionX;
     this.yJoystickDoubleSupplier = directionY;
     this.thetaJoystickDoubleSupplier = rotation;
     this.sclaerInputDoubleSupplier = scalar;
+    this.feildOriented = feildOriented;
 
-    feildOriented = new LoggedDashboardBoolean("feild Oriented", true);
     addRequirements(drivebaseSubsystem);
   }
 
@@ -64,6 +65,6 @@ public class DefaultDrive extends Command {
             slewRateLimiterX.calculate(joyStickX),
             slewRateLimiterY.calculate(joyStickY),
             slewRateLimiterTheta.calculate(joyStickTheta)),
-        feildOriented.get());
+        feildOriented.getAsBoolean());
   }
 }

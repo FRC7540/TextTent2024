@@ -91,4 +91,8 @@ public class ClimberSubsystem extends SubsystemBase {
     }
     io.driveMotor(voltage);
   }
+
+  public ClimberState getState() {
+    return climberState;
+  }
 }

@@ -109,8 +109,8 @@ public final class Constants {
 
   public static final class Shooter {
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
-    public static final int PUSHER_MOTOR_CAN_ID = 16;
-    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
+    public static final int PUSHER_MOTOR_CAN_ID = 12;
+    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushed;
     public static final boolean PUSHER_MOTOR_INVERTED = false;
 
     public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
@@ -182,7 +182,7 @@ public final class Constants {
   }
 
   public static final class Intake {
-    public static final int MOTOR_ONE_CAN_ID = 14;
+    public static final int MOTOR_ONE_CAN_ID = 13;
     public static final MotorType SPARK_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean MOTOR_ONE_INVERTED = false;
     public static final int INTAKE_NOTE_LIMIT_SWITCH_PORT = 0;

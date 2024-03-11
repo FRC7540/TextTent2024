@@ -10,18 +10,19 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
+import frc.robot.commands.Shooting.ShootNote;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.drive.DriveWhileLockedToTarget;
-import frc.robot.commands.intake.IntakeNote;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.shooter.FlywheelIOSim;
 import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
@@ -75,19 +77,7 @@ public class RobotContainer {
   LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
   LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
-  ShuffleboardLayout robotPosesLayoute =
-      Shuffleboard.getTab("Main")
-          .getLayout("Robot Poses", BuiltInLayouts.kList)
-          .withPosition(3, 0)
-          .withSize(1, 2)
-          .withProperties(null);
-
-  ShuffleboardLayout warningLightsLayoute =
-      Shuffleboard.getTab("Main")
-          .getLayout("Warning Lights", BuiltInLayouts.kGrid)
-          .withPosition(4, 0)
-          .withSize(3, 3)
-          .withProperties(null);
+  PowerDistribution powerDistribution = new PowerDistribution();
 
   public RobotContainer() {
     if (Robot.isSimulation() && !Robot.isReplay) {
@@ -101,109 +91,79 @@ public class RobotContainer {
     configureDefaultCommands();
     configureBindings();
 
-    robotPosesLayoute
-        .addString(
-            "BotPose",
-            () ->
-                ("X:"
-                    + RobotState.robotPose2D.getX()
-                    + " "
-                    + "Y:"
-                    + RobotState.robotPose2D.getY()
-                    + " "
-                    + "T:"
-                    + RobotState.robotPose2D.getRotation().getRadians()))
-        .withWidget(BuiltInWidgets.kTextView)
-        .withSize(1, 1)
-        .withPosition(1, 0);
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    robotPosesLayoute
-        .addString(
-            "VisionPose",
-            () ->
-                ("X:"
-                    + RobotState.botVisionPose.getX()
-                    + " "
-                    + "Y:"
-                    + RobotState.botVisionPose.getY()
-                    + " "
-                    + "T:"
-                    + RobotState.botVisionPose.toPose2d().getRotation().getRadians()))
-        .withWidget(BuiltInWidgets.kTextView)
-        .withSize(1, 1)
-        .withPosition(2, 0);
+    DriverStation.silenceJoystickConnectionWarning(true);
+    setupDashboard();
+  }
 
-    warningLightsLayoute
+  private void setupDashboard() {
+    LiveWindow.disableAllTelemetry();
+
+    ShuffleboardLayout warningLightsLayout =
+        Shuffleboard.getTab("Teleop")
+            .getLayout("Warning Lights", BuiltInLayouts.kGrid)
+            .withPosition(0, 5)
+            .withSize(5, 2)
+            .withProperties(null);
+
+    warningLightsLayout
         .addBoolean("Boolean 1", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withSize(1, 1)
         .withPosition(0, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 2", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withSize(1, 1)
         .withPosition(1, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 3", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
+        .withSize(1, 2)
         .withPosition(2, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 4", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(0, 1);
+        .withSize(1, 2)
+        .withPosition(3, 0);
 
-    warningLightsLayoute
+    warningLightsLayout
         .addBoolean("Boolean 5", () -> false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(1, 1);
+        .withSize(1, 2)
+        .withPosition(4, 0);
 
-    warningLightsLayoute
-        .addBoolean("Boolean 6", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(2, 1);
+    Shuffleboard.getTab("Teleop")
+        .add("Total Current draw", powerDistribution.getTotalCurrent())
+        .withPosition(5, 5)
+        .withSize(3, 2)
+        .withWidget(BuiltInWidgets.kDial);
 
-    warningLightsLayoute
-        .addBoolean("Boolean 7", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(0, 2);
-
-    warningLightsLayoute
-        .addBoolean("Boolean 8", () -> false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(1, 2);
-
-    warningLightsLayoute
-        .addBoolean("Boolean 9", () -> true)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(1, 1)
-        .withPosition(2, 2);
-
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    Shuffleboard.getTab("Auto")
+        .add("Selected Auto", autoChooser.getSendableChooser())
+        .withPosition(0, 0)
+        .withSize(2, 2);
   }
 
   private void configureBindings() {
     operatorController
         .a()
         .debounce(0.2)
-        .onTrue(
-            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+        .onTrue(new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> flywheelSpeedInput.get()));
 
     operatorController
-        .b()
-        .debounce(0.2)
-        .onTrue(
-            new InstantCommand(() -> shooterSubsystem.setFlywheelSpeeds(flywheelSpeedInput.get())));
+        .x()
+        .debounce(0.02)
+        .onTrue(new frc.robot.commands.IntakeNote(intakeSubsystem, shooterSubsystem));
 
-    operatorController.x().debounce(0.02).onTrue(new IntakeNote(intakeSubsystem));
+    operatorController
+        .rightTrigger()
+        .debounce(0.2)
+        .onTrue(new ShootNote(shooterSubsystem, () -> flywheelSpeedInput.get()));
 
     driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
     driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
@@ -235,6 +195,7 @@ public class RobotContainer {
                 driverController::getLeftX,
                 driverController::getRightX,
                 driverController::getLeftTriggerAxis,
+                () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
                 drivebaseSubsystem),
             driverController.b()));
   }
@@ -262,10 +223,7 @@ public class RobotContainer {
     System.out.println("Real robot detected!");
 
     // Only create the real IO layer if we need to
-    shooterSubsystem =
-        Preferences.getBoolean("flywheelReal", Constants.Flags.USE_REAL_FLYWHEEL_HARDWARE)
-            ? new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIO() {})
-            : new ShooterSubsystem(new FlywheelIO() {}, new ShooterIO() {});
+    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIOSparkMax() {});
 
     drivebaseSubsystem =
         new DrivebaseSubsystem(
