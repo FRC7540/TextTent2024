@@ -116,7 +116,7 @@ public final class Constants {
     public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
     public static final int SHOT_LIMIT_SWITCH_PORT = 2;
 
-    public static final double FLYWHEEL_SPEED_THRESHOLD = 2;
+    public static final double FLYWHEEL_SPEED_THRESHOLD = 15;
 
     public static final double SHOOTER_ANGLE_RADIANS = 1;
 
@@ -159,7 +159,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.11;
+        public static final double MOMENT_OF_INERTIA = 0.105;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;
@@ -172,7 +172,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.11;
+        public static final double MOMENT_OF_INERTIA = 0.105;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
@@ -193,10 +193,10 @@ public final class Constants {
   }
 
   public static final class Climber {
-    public static final double EXTENSION_RADIANS = 0.0;
+    public static final double EXTENSION_RADIANS = 10.0;
     public static final double EXTENSION_THRESHOLD = 0.0;
-    public static final double GEAR_RATIO = 1.0;
-    public static final double SPOOL_SIZE_METERS = 1.0;
+    public static final double GEAR_RATIO = 64;
+    public static final double SPOOL_SIZE_METERS = 0.01;
     public static final int CLIMBER_MOTOR_CONTROLLER_CAN_ID = 16;
     public static final int CLIMBER_ENCODER_PORT = 4;
     public static final double CLIMBER_ENCODER_DISTANCE_PER_ROTATION = 1;

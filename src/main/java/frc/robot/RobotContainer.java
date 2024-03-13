@@ -18,12 +18,16 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
+import frc.robot.commands.climber.ExtendClimber;
+import frc.robot.commands.climber.RetractClimber;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.drive.DriveWhileLockedToTarget;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOVictor;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
 import frc.robot.subsystems.drivebase.GyroIO;
@@ -186,6 +190,27 @@ public class RobotContainer {
         .debounce(0.2)
         .onTrue(new ShootNote(shooterSubsystem, () -> flywheelSpeedInput.get()));
 
+    operatorController
+        .rightBumper()
+        .debounce(0.2)
+        .onTrue(shooterSubsystem.sysIdDynamic(Direction.kForward));
+    operatorController
+        .leftBumper()
+        .debounce(0.2)
+        .onTrue(shooterSubsystem.sysIdDynamic(Direction.kReverse));
+
+    operatorController
+        .y()
+        .debounce(0.2)
+        .onTrue(shooterSubsystem.sysIdQuasistatic(Direction.kForward));
+    operatorController
+        .b()
+        .debounce(0.2)
+        .onTrue(shooterSubsystem.sysIdQuasistatic(Direction.kReverse));
+
+    driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
+    driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
+
     driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
     driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
     driverController
@@ -245,7 +270,7 @@ public class RobotContainer {
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
 
-    climberSubsystem = new ClimberSubsystem(new ClimberIO() {});
+    climberSubsystem = new ClimberSubsystem(new ClimberIOVictor() {});
   }
 
   private void setupForSimulation() {

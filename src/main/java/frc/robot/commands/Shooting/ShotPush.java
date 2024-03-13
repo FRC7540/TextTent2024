@@ -1,9 +1,8 @@
 package frc.robot.commands.Shooting;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.util.States.ShooterState;
 
 public class ShotPush extends Command {
   private final ShooterSubsystem shooterSubsystem;
@@ -15,7 +14,7 @@ public class ShotPush extends Command {
 
   @Override
   public void initialize() {
-    shooterSubsystem.setPusherVoltage(Constants.Shooter.Direction.FORWARD.getVoltage());
+    shooterSubsystem.setPusherVoltage(12.0);
   }
 
   @Override
@@ -25,7 +24,7 @@ public class ShotPush extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getState() != ShooterState.ARMED
-        || shooterSubsystem.getState() != ShooterState.SHOOTING;
+    Trigger trig = new Trigger(shooterSubsystem::getShotLimitSwitch);
+    return trig.debounce(0.1).getAsBoolean();
   }
 }

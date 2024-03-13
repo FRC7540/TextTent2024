@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
-
 public class ClimberIOVictor implements ClimberIO {
 
   VictorSPX climberController = new VictorSPX(16);
@@ -20,7 +19,7 @@ public class ClimberIOVictor implements ClimberIO {
   @Override
   public void driveMotor(double voltage) {
     climberController.set(
-        VictorSPXControlMode.PercentOutput, MathUtil.clamp(voltage, -12, 12) / 12);
+        VictorSPXControlMode.PercentOutput, -1 * MathUtil.clamp(voltage, -12, 12) / 12);
   }
 
   @Override

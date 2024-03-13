@@ -17,9 +17,9 @@ public class DefaultDrive extends Command {
   private final DoubleSupplier sclaerInputDoubleSupplier;
   private final BooleanSupplier feildOriented;
 
-  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(1);
-  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(1);
-  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(1);
+  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(20);
+  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(20);
+  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(20);
 
   public DefaultDrive(
       DoubleSupplier directionX,
