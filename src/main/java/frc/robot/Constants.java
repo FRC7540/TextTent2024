@@ -197,6 +197,9 @@ public final class Constants {
     public static final double EXTENSION_THRESHOLD = 0.0;
     public static final double GEAR_RATIO = 1.0;
     public static final double SPOOL_SIZE_METERS = 1.0;
+    public static final int CLIMBER_MOTOR_CONTROLLER_CAN_ID = 16;
+    public static final int CLIMBER_ENCODER_PORT = 4;
+    public static final double CLIMBER_ENCODER_DISTANCE_PER_ROTATION = 1;
   }
 
   public static final class Vision {

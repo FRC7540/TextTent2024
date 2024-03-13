@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
+
 public class ClimberIOVictor implements ClimberIO {
 
   VictorSPX climberController = new VictorSPX(16);
