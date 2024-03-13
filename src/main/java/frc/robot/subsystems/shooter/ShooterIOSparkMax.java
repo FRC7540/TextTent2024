@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
@@ -10,6 +11,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   private final CANSparkMax firingMotor =
       new CANSparkMax(
           Constants.Shooter.PUSHER_MOTOR_CAN_ID, Constants.Shooter.SPARK_MAX_MOTOR_ONE_TYPE);
+  private final CANSparkMax firingMotorTwo = new CANSparkMax(14, MotorType.kBrushed);
   private final DigitalInput holderLimitSwitch =
       new DigitalInput(Constants.Shooter.HOLDER_LIMIT_SWITCH_PORT);
   private final DigitalInput shotLimitSwitch =
@@ -22,7 +24,8 @@ public class ShooterIOSparkMax implements ShooterIO {
     // firingMotor.setCANTimeout(250);
     // firingMotor.enableVoltageCompensation(12.0);
     // firingMotor.setSmartCurrentLimit(25);
-    // firingMotor.setInverted(Constants.Shooter.PUSHER_MOTOR_INVERTED);
+    firingMotor.setInverted(true);
+    firingMotorTwo.setInverted(false);
     // firingMotor.setIdleMode(IdleMode.kCoast);
     // firingMotor.setCANTimeout(0);
     // firingMotor.burnFlash();
@@ -31,7 +34,7 @@ public class ShooterIOSparkMax implements ShooterIO {
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.holdingLimitSwitch = !holderLimitSwitch.get();
-    inputs.shotLimitSwitch = shotLimitSwitch.get();
+    inputs.shotLimitSwitch = !shotLimitSwitch.get();
     inputs.firingMotorAppliedVoltage = firingMotorApplliedVoltage;
   }
 
@@ -39,5 +42,6 @@ public class ShooterIOSparkMax implements ShooterIO {
   public void setMotorVoltage(double voltage) {
     firingMotorApplliedVoltage = voltage;
     firingMotor.setVoltage(voltage);
+    firingMotorTwo.setVoltage(voltage);
   }
 }

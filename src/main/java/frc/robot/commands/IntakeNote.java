@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.util.States.ShooterState;
@@ -28,8 +27,8 @@ public class IntakeNote extends Command {
     }
 
     intakingTimer.start();
-    inatakeSubsystem.setMotorVoltage(8.0);
-    shooterSubsystem.setPusherVoltage(Constants.Shooter.Direction.FORWARD.getVoltage());
+    inatakeSubsystem.setMotorVoltage(12.0);
+    shooterSubsystem.setPusherVoltage(12.0);
   }
 
   @Override

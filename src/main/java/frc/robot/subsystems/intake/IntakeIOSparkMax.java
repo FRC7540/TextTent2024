@@ -10,7 +10,7 @@ import frc.robot.Constants;
 public class IntakeIOSparkMax implements IntakeIO {
 
   private final CANSparkMax motorOne =
-      new CANSparkMax(Constants.Intake.MOTOR_ONE_CAN_ID, MotorType.kBrushed);
+      new CANSparkMax(Constants.Intake.MOTOR_ONE_CAN_ID, MotorType.kBrushless);
 
   private final DigitalInput intakeNoteLimtitSwitch =
       new DigitalInput(Constants.Intake.INTAKE_NOTE_LIMIT_SWITCH_PORT);

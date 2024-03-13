@@ -159,7 +159,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0035;
+        public static final double MOMENT_OF_INERTIA = 0.11;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;
@@ -172,7 +172,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.0035;
+        public static final double MOMENT_OF_INERTIA = 0.11;
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
