@@ -15,9 +15,6 @@ public class ShotPush extends Command {
 
   @Override
   public void initialize() {
-    if (shooterSubsystem.getState() != ShooterState.ARMED) {
-      this.cancel();
-    }
     shooterSubsystem.setPusherVoltage(Constants.Shooter.Direction.FORWARD.getVoltage());
   }
 
@@ -28,6 +25,7 @@ public class ShotPush extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getState() == ShooterState.RECOVERING;
+    return shooterSubsystem.getState() != ShooterState.ARMED
+        || shooterSubsystem.getState() != ShooterState.SHOOTING;
   }
 }

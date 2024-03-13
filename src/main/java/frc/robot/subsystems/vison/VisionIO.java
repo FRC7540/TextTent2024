@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vison;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -13,6 +14,7 @@ public interface VisionIO {
     public int currentPipeline = -1;
     public boolean validEntry = false;
     public Pose3d selfPoseFieldSpace = new Pose3d(new Translation3d(), new Rotation3d());
+    public Pose2d robotPose2d = new Pose2d();
     public Pose3d targetPoseRobotSpace = new Pose3d(new Translation3d(), new Rotation3d());
   }
 
