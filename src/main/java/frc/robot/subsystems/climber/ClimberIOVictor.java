@@ -11,7 +11,7 @@ public class ClimberIOVictor implements ClimberIO {
   DutyCycleEncoder climberEncoder = new DutyCycleEncoder(4);
 
   public ClimberIOVictor() {
-    climberEncoder.setDistancePerRotation(1);
+    climberEncoder.setDistancePerRotation(-1);
     climberEncoder.reset();
     climberController.set(VictorSPXControlMode.Disabled, 0.0);
   }
