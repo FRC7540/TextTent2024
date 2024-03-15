@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -16,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
 import frc.robot.commands.drive.DefaultDrive;
@@ -83,6 +87,7 @@ public class RobotContainer {
     }
     fillMissingSubsystems();
 
+    registerNamedCommands();
     registerVisionConsumers();
     configureDefaultCommands();
     configureBindings();
@@ -91,6 +96,12 @@ public class RobotContainer {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     setupDashboard();
+  }
+
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 150.0));
+    NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
 
   private void setupDashboard() {
@@ -147,6 +158,15 @@ public class RobotContainer {
         .add("Selected Auto", autoChooser.getSendableChooser())
         .withPosition(0, 0)
         .withSize(2, 2);
+
+    HttpCamera AprilTagCamera =
+        new HttpCamera("AprilTagCamera", "http://frcvision.local:1181/stream.mjpg");
+    CameraServer.addCamera(AprilTagCamera);
+    Shuffleboard.getTab("Teleop").add(AprilTagCamera).withPosition(11, 0).withSize(9, 4);
+
+    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://frcvision.local:1181/stream.mjpg");
+    CameraServer.addCamera(NoteCamera);
+    Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
   }
 
   private void configureDefaultCommands() {
