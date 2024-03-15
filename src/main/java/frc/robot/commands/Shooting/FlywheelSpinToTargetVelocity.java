@@ -30,6 +30,7 @@ public class FlywheelSpinToTargetVelocity extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getFlywheelState() == FlywheelState.AT_SPEED;
+    return shooterSubsystem.getFlywheelState() == FlywheelState.AT_SPEED
+        || shooterSubsystem.getFlywheelState() == FlywheelState.STOPPED;
   }
 }
