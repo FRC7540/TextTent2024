@@ -6,14 +6,17 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class ShotPush extends Command {
   private final ShooterSubsystem shooterSubsystem;
+  private double speed;
 
-  public ShotPush(ShooterSubsystem shooterSubsystem) {
+  public ShotPush(ShooterSubsystem shooterSubsystem, double speed) {
     this.shooterSubsystem = shooterSubsystem;
+    this.speed = speed;
     addRequirements(shooterSubsystem);
   }
 
   @Override
   public void initialize() {
+    shooterSubsystem.setFlywheelSpeeds(speed);
     shooterSubsystem.setPusherVoltage(12.0);
   }
 
@@ -25,6 +28,6 @@ public class ShotPush extends Command {
   @Override
   public boolean isFinished() {
     Trigger trig = new Trigger(shooterSubsystem::getShotLimitSwitch);
-    return trig.debounce(0.1).getAsBoolean();
+    return false;
   }
 }

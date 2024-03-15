@@ -77,7 +77,8 @@ public class RobotContainer {
   LoggedDashboardNumber pathFindY = new LoggedDashboardNumber("pathfinding y");
   LoggedDashboardNumber pathFindTheta = new LoggedDashboardNumber("pathfinding theta");
 
-  PowerDistribution powerDistribution = new PowerDistribution();
+  PowerDistribution powerDistribution =
+      new PowerDistribution(51, PowerDistribution.ModuleType.kCTRE);
 
   public RobotContainer() {
     if (Robot.isSimulation() && !Robot.isReplay) {
@@ -160,11 +161,11 @@ public class RobotContainer {
         .withSize(2, 2);
 
     HttpCamera AprilTagCamera =
-        new HttpCamera("AprilTagCamera", "http://frcvision.local:1181/stream.mjpg");
+        new HttpCamera("AprilTagCamera", "http://limelight-april.local:5800");
     CameraServer.addCamera(AprilTagCamera);
     Shuffleboard.getTab("Teleop").add(AprilTagCamera).withPosition(11, 0).withSize(9, 4);
 
-    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://frcvision.local:1181/stream.mjpg");
+    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://limelight-ai:5800");
     CameraServer.addCamera(NoteCamera);
     Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
   }
