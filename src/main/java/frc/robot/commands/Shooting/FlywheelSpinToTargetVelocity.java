@@ -25,6 +25,7 @@ public class FlywheelSpinToTargetVelocity extends Command {
     if (interrupted) {
       shooterSubsystem.setFlywheelSpeeds(0.0);
     }
+    shooterSubsystem.setFlywheelSpeeds(0.0);
   }
 
   @Override

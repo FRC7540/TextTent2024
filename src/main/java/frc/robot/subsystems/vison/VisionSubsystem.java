@@ -17,6 +17,8 @@ public class VisionSubsystem extends VirtualSubsystem {
       new ArrayList<BiConsumer<Pose3d, Double>>();
   private ArrayList<BiConsumer<Pose3d, Double>> targetConsumers =
       new ArrayList<BiConsumer<Pose3d, Double>>();
+  // private ArrayList<BiConsumer<Double[], Double>> targetNoteconsumers = new
+  // ArrayList<BiConsumer<Double[], Double>>();
 
   public VisionSubsystem(VisionIO visionio) {
     this.limelightIO = visionio;

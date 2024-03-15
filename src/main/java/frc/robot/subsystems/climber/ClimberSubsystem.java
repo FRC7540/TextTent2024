@@ -36,7 +36,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     if (((getClimberExtension()
                 >= Constants.Climber.EXTENSION_RADIANS - Constants.Climber.EXTENSION_THRESHOLD)
-            || (getClimberExtension()
+            && (getClimberExtension()
                 <= Constants.Climber.EXTENSION_RADIANS + Constants.Climber.EXTENSION_THRESHOLD))
         && getClimberMotorVoltage() == 0.0) {
       climberState = ClimberState.EXTENDED;
@@ -44,7 +44,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     if (getClimberExtension()
-        >= Constants.Climber.EXTENSION_RADIANS * 2 + Constants.Climber.EXTENSION_THRESHOLD) {
+        >= Constants.Climber.EXTENSION_RADIANS * 2 - Constants.Climber.EXTENSION_THRESHOLD) {
       climberState = ClimberState.RETRACTED;
       return;
     }
@@ -57,7 +57,9 @@ public class ClimberSubsystem extends SubsystemBase {
       return;
     }
 
-    if ((getClimberExtension() > 0 && getClimberExtension() > Constants.Climber.EXTENSION_RADIANS)
+    if ((getClimberExtension() > 0
+            && getClimberExtension()
+                > Constants.Climber.EXTENSION_RADIANS + Constants.Climber.EXTENSION_THRESHOLD)
         && getClimberMotorVoltage() > 0) {
       climberState = ClimberState.RETRACTING;
       return;

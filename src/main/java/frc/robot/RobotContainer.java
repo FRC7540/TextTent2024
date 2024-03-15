@@ -5,11 +5,11 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -17,14 +17,12 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
-import frc.robot.commands.climber.ExtendClimber;
-import frc.robot.commands.climber.RetractClimber;
 import frc.robot.commands.drive.DefaultDrive;
-import frc.robot.commands.drive.DriveWhileLockedToTarget;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOVictor;
@@ -49,7 +47,6 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
 import frc.robot.subsystems.vison.VisionSubsystem;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -90,6 +87,7 @@ public class RobotContainer {
     }
     fillMissingSubsystems();
 
+    registerNamedCommands();
     registerVisionConsumers();
     configureDefaultCommands();
     configureBindings();
@@ -98,6 +96,12 @@ public class RobotContainer {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     setupDashboard();
+  }
+
+  private void registerNamedCommands() {
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 150.0));
+    NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
 
   private void setupDashboard() {
@@ -154,6 +158,15 @@ public class RobotContainer {
         .add("Selected Auto", autoChooser.getSendableChooser())
         .withPosition(0, 0)
         .withSize(2, 2);
+
+    HttpCamera AprilTagCamera =
+        new HttpCamera("AprilTagCamera", "http://frcvision.local:1181/stream.mjpg");
+    CameraServer.addCamera(AprilTagCamera);
+    Shuffleboard.getTab("Teleop").add(AprilTagCamera).withPosition(11, 0).withSize(9, 4);
+
+    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://frcvision.local:1181/stream.mjpg");
+    CameraServer.addCamera(NoteCamera);
+    Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
   }
 
   private void configureDefaultCommands() {
@@ -166,14 +179,15 @@ public class RobotContainer {
             driverController::getLeftTriggerAxis,
             () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
             drivebaseSubsystem));
+
+    // shooterSubsystem.setDefaultCommand(
+    //     new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> 0.0));
+
+    climberSubsystem.setDefaultCommand(
+        new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
   }
 
   private void configureBindings() {
-    Supplier<Pose2d> currentSpeak =
-        () ->
-            DriverStation.getAlliance().get() == Alliance.Blue
-                ? Constants.Field.Blue.SPEAKER_POSE2D
-                : Constants.Field.Red.SPEAKER_POSE2D;
 
     operatorController
         .a()
@@ -187,50 +201,48 @@ public class RobotContainer {
 
     operatorController
         .rightTrigger()
-        .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> flywheelSpeedInput.get()));
+        .debounce(0.02)
+        .onTrue(new ShootNote(shooterSubsystem, () -> 150.0));
+
+    operatorController
+        .leftTrigger()
+        .debounce(0.02)
+        .onTrue(new ShootNote(shooterSubsystem, () -> 20.0));
 
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(shooterSubsystem.sysIdDynamic(Direction.kForward));
-    operatorController
-        .leftBumper()
-        .debounce(0.2)
-        .onTrue(shooterSubsystem.sysIdDynamic(Direction.kReverse));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
 
-    operatorController
-        .y()
-        .debounce(0.2)
-        .onTrue(shooterSubsystem.sysIdQuasistatic(Direction.kForward));
-    operatorController
-        .b()
-        .debounce(0.2)
-        .onTrue(shooterSubsystem.sysIdQuasistatic(Direction.kReverse));
-
-    driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
-    driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
+    // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
+    // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
+    driverController
+        .rightTrigger()
+        .debounce(0.4)
+        .whileTrue(
+            new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(8.0), climberSubsystem));
 
     driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
     driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
-    driverController
-        .a()
-        .debounce(1)
-        .onTrue(
-            AutoBuilder.pathfindToPose(
-                new Pose2d(pathFindX.get(), pathFindY.get(), new Rotation2d(pathFindTheta.get())),
-                Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
+    // driverController
+    //     .a()
+    //     .debounce(1)
+    //     .onTrue(
+    //         AutoBuilder.pathfindToPose(
+    //             new Pose2d(pathFindX.get(), pathFindY.get(), new
+    // Rotation2d(pathFindTheta.get())),
+    //             Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
 
-    driverController
-        .a()
-        .debounce(0.2)
-        .onTrue(
-            new DriveWhileLockedToTarget(
-                currentSpeak,
-                driverController::getLeftX,
-                driverController::getLeftY,
-                driverController::getLeftTriggerAxis,
-                drivebaseSubsystem));
+    // driverController
+    //     .a()
+    //     .debounce(0.2)
+    //     .onTrue(
+    //         new DriveWhileLockedToTarget(
+    //             currentSpeak,
+    //             driverController::getLeftX,
+    //             driverController::getLeftY,
+    //             driverController::getLeftTriggerAxis,
+    //             drivebaseSubsystem));
   }
 
   private void registerVisionConsumers() {
