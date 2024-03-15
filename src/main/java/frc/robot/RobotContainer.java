@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
-import frc.robot.commands.climber.ExtendClimber;
-import frc.robot.commands.climber.RetractClimber;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -196,8 +194,8 @@ public class RobotContainer {
         .debounce(0.2)
         .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
 
-    //driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
-    //driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
+    // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
+    // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
     driverController
         .rightTrigger()
         .debounce(0.4)
