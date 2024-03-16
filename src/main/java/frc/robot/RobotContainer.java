@@ -178,7 +178,7 @@ public class RobotContainer {
             driverController::getLeftX,
             driverController::getRightX,
             driverController::getLeftTriggerAxis,
-            () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
+            () -> true,
             drivebaseSubsystem));
 
     // shooterSubsystem.setDefaultCommand(
@@ -203,17 +203,22 @@ public class RobotContainer {
     operatorController
         .rightTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 150.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
 
     operatorController
         .leftTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 20.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 40.0));
 
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 275.0));
+
+    operatorController
+        .leftBumper()
+        .debounce(0.2)
+        .onTrue(new ShootNote(shooterSubsystem, () -> 300.0));
 
     // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
     // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));

@@ -169,12 +169,13 @@ public class DrivebaseSubsystem extends SubsystemBase {
     poseEstimator.update(rawGyroRotation, modulePositions);
     frc.robot.RobotState.robotPose2D = poseEstimator.getEstimatedPosition();
 
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-      invert_field_oriented = -1;
-    } else {
-      invert_field_oriented = 1;
-    }
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+    //   invert_field_oriented = -1;
+    // } else {
+    //   invert_field_oriented = 1;
+    // }
+    invert_field_oriented = -1;
   }
 
   /**

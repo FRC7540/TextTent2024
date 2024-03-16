@@ -44,22 +44,19 @@ public class DefaultDrive extends Command {
     Double joyStickX =
         (MathUtil.applyDeadband(xJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
             * 1.0;
 
     Double joyStickY =
         (MathUtil.applyDeadband(yJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
             * 1.0;
 
     Double joyStickTheta =
         ((MathUtil.applyDeadband(thetaJoystickDoubleSupplier.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_ANGULAR_SPEED)
-                * (sclaerInputDoubleSupplier.getAsDouble() - 1))
+                * 1.0)
             * Constants.HID.thetaJoystickScalar
             * 1.0;
-
     drivebaseSubsystem.drivejoysticks(
         new ChassisSpeeds(
             slewRateLimiterX.calculate(joyStickX),

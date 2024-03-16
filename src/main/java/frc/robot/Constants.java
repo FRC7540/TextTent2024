@@ -46,7 +46,7 @@ public final class Constants {
   public static final class HID {
     public static final int operatorControlerPort = 1;
     public static final int driverControllerPort = 0;
-    public static final double thetaJoystickScalar = 1;
+    public static final double thetaJoystickScalar = 0.5;
   }
 
   public static final class Drivebase {
@@ -58,7 +58,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
     // bevel pinion
     public static final double DRIVE_GEAR_RATIO = (45.0 * 22.0) / (DRIVE_PINON * 15.0);
-    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.63);
+    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(33);
     public static final double TRACK_WIDTH_X = Units.inchesToMeters(29.0);
     public static final double TRACK_WIDTH_Y = Units.inchesToMeters(29.0);
     public static final double DRIVE_BASE_RADIUS =
