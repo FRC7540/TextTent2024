@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -17,12 +18,16 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
 import frc.robot.commands.drive.DefaultDrive;
+import frc.robot.commands.drive.DriveLockedStickyRotation;
+import frc.robot.commands.drive.DriveLockedToNote;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOVictor;
@@ -44,9 +49,13 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkMax;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.vison.AIIO;
+import frc.robot.subsystems.vison.AIIOLimelight;
 import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
 import frc.robot.subsystems.vison.VisionSubsystem;
+import frc.robot.util.States.ChamberState;
+import frc.robot.util.types.TargetNote;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -97,6 +106,7 @@ public class RobotContainer {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     setupDashboard();
+    registerTriggers();
   }
 
   private void registerNamedCommands() {
@@ -165,7 +175,7 @@ public class RobotContainer {
     CameraServer.addCamera(AprilTagCamera);
     Shuffleboard.getTab("Teleop").add(AprilTagCamera).withPosition(11, 0).withSize(9, 4);
 
-    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://limelight-ai:5800");
+    HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://limelight-ai.local:5800");
     CameraServer.addCamera(NoteCamera);
     Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
   }
@@ -180,9 +190,6 @@ public class RobotContainer {
             driverController::getLeftTriggerAxis,
             () -> driverController.rightBumper().debounce(0.2).getAsBoolean(),
             drivebaseSubsystem));
-
-    // shooterSubsystem.setDefaultCommand(
-    //     new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> 0.0));
 
     climberSubsystem.setDefaultCommand(
         new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
@@ -223,8 +230,12 @@ public class RobotContainer {
         .whileTrue(
             new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(8.0), climberSubsystem));
 
-    driverController.start().debounce(0.2).onTrue(drivebaseSubsystem.getZeroGyroCommand());
-    driverController.x().debounce(0.2).onTrue(drivebaseSubsystem.getZeroPoseCommand());
+    driverController
+        .start()
+        .debounce(0.2)
+        .onTrue(
+            Commands.sequence(
+                drivebaseSubsystem.getZeroGyroCommand(), drivebaseSubsystem.getZeroPoseCommand()));
     // driverController
     //     .a()
     //     .debounce(1)
@@ -234,16 +245,38 @@ public class RobotContainer {
     // Rotation2d(pathFindTheta.get())),
     //             Constants.Drivebase.DEFAULT_PATHFINDING_CONSTRAINTS));
 
-    // driverController
-    //     .a()
-    //     .debounce(0.2)
-    //     .onTrue(
-    //         new DriveWhileLockedToTarget(
-    //             currentSpeak,
-    //             driverController::getLeftX,
-    //             driverController::getLeftY,
-    //             driverController::getLeftTriggerAxis,
-    //             drivebaseSubsystem));
+    driverController
+        .a()
+        .debounce(0.02)
+        .onTrue(
+            new DriveLockedStickyRotation(
+                () -> drivebaseSubsystem.getRotation().plus(new Rotation2d(Math.PI)),
+                () -> 0.0,
+                () -> 0.0,
+                () -> 0.0,
+                drivebaseSubsystem));
+
+    driverController
+        .y()
+        .debounce(0.02)
+        .toggleOnTrue(
+            new DriveLockedStickyRotation(
+                drivebaseSubsystem::getRotation,
+                driverController::getLeftX,
+                driverController::getLeftY,
+                driverController::getLeftTriggerAxis,
+                drivebaseSubsystem));
+
+    driverController
+        .x()
+        .debounce(0.02)
+        .onTrue(
+            new DriveLockedToNote(
+                () -> RobotState.targetNote,
+                driverController::getLeftX,
+                driverController::getLeftY,
+                driverController::getLeftTriggerAxis,
+                drivebaseSubsystem));
   }
 
   private void registerVisionConsumers() {
@@ -252,9 +285,21 @@ public class RobotContainer {
         (Pose3d pose, Double timestamp) -> {
           RobotState.botVisionPose = pose;
         });
+    visionSubsystem.registerTargetNoteConsumer(
+        (TargetNote targetNote, Double timestamp) -> {
+          RobotState.targetNote = targetNote;
+        });
   }
 
   public void initPathPlanner() {}
+
+  public void registerTriggers() {
+    new Trigger(
+            () -> RobotState.targetNote.targetArea() >= Constants.Vision.AUTOINTAKE_AREA_THRESHOLD)
+        .and(() -> shooterSubsystem.getChamberState() != ChamberState.EMPTY)
+        .debounce(0.2)
+        .whileTrue(new IntakeNote(intakeSubsystem, shooterSubsystem));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -279,7 +324,7 @@ public class RobotContainer {
             new ModuleIOSparkMax(2) {},
             new ModuleIOSparkMax(3) {});
 
-    visionSubsystem = new VisionSubsystem(new LimelightIO());
+    visionSubsystem = new VisionSubsystem(new LimelightIO(), new AIIOLimelight());
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
 
@@ -298,7 +343,7 @@ public class RobotContainer {
             new ModuleIOSim() {},
             new ModuleIOSim() {},
             new ModuleIOSim() {});
-    visionSubsystem = new VisionSubsystem(new VisionIO() {});
+    visionSubsystem = new VisionSubsystem(new VisionIO() {}, new AIIO() {});
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSim());
 
@@ -320,7 +365,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
     visionSubsystem =
-        visionSubsystem != null ? visionSubsystem : new VisionSubsystem(new VisionIO() {});
+        visionSubsystem != null
+            ? visionSubsystem
+            : new VisionSubsystem(new VisionIO() {}, new AIIO() {});
+
     intakeSubsystem =
         intakeSubsystem != null ? intakeSubsystem : new IntakeSubsystem(new IntakeIO() {});
     climberSubsystem =

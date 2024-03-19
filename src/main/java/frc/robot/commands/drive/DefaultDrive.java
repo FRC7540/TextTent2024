@@ -17,9 +17,9 @@ public class DefaultDrive extends Command {
   private final DoubleSupplier sclaerInputDoubleSupplier;
   private final BooleanSupplier feildOriented;
 
-  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(20);
-  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(20);
-  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(20);
+  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(40);
+  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(40);
+  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(30);
 
   public DefaultDrive(
       DoubleSupplier directionX,
@@ -44,19 +44,19 @@ public class DefaultDrive extends Command {
     Double joyStickX =
         (MathUtil.applyDeadband(xJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
+            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25)
             * 1.0;
 
     Double joyStickY =
         (MathUtil.applyDeadband(yJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * (sclaerInputDoubleSupplier.getAsDouble() - 1)
+            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25)
             * 1.0;
 
     Double joyStickTheta =
         ((MathUtil.applyDeadband(thetaJoystickDoubleSupplier.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_ANGULAR_SPEED)
-                * (sclaerInputDoubleSupplier.getAsDouble() - 1))
+                * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25))
             * Constants.HID.thetaJoystickScalar
             * 1.0;
 

@@ -15,11 +15,11 @@ public class SetPipeline extends Command {
 
   @Override
   public void initialize() {
-    visionSubsystem.setVisionPipeline(pipeline);
+    visionSubsystem.setVisionPipelineApril(pipeline);
   }
 
   @Override
   public boolean isFinished() {
-    return visionSubsystem.getCurrentVisionPipeline() == pipeline.getAsInt();
+    return visionSubsystem.getCurrentVisionPipelineApril() == pipeline.getAsInt();
   }
 }
