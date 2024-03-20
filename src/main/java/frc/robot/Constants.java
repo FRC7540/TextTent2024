@@ -204,6 +204,7 @@ public final class Constants {
 
   public static final class Vision {
     public static final String APRIL_TAG_NETWORKTABLE_TOPIC_NAME = "limelight-april";
+    public static final double AUTOINTAKE_AREA_THRESHOLD = 25;
   }
 
   public static final class Field {
