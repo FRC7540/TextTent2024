@@ -34,7 +34,7 @@ public class DriveLockedRotation extends Command {
     this.yJoystickDoubleSupplier = yJoystickDoubleSupplier;
     this.scalar = scalarInputDoubleSupplier;
 
-    pidController = new PIDController(0.5, 0, 0);
+    pidController = new PIDController(3, 0, 0);
     pidController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(drivebaseSubsystem);
   }
