@@ -23,6 +23,7 @@ public class DriveLockedStickyRotation extends Command {
   private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(40);
 
   private double setpoint = 0.0;
+
   public DriveLockedStickyRotation(
       Supplier<Rotation2d> targetRotationSupplier,
       DoubleSupplier xJoystickDoubleSupplier,
@@ -42,7 +43,7 @@ public class DriveLockedStickyRotation extends Command {
 
   @Override
   public void initialize() {
-      setpoint = targetRotationSupplier.get().getRadians();
+    setpoint = targetRotationSupplier.get().getRadians();
   }
 
   @Override
@@ -54,8 +55,7 @@ public class DriveLockedStickyRotation extends Command {
     return new ChassisSpeeds(
         slewRateLimiterX.calculate(getJoystickXClean()),
         slewRateLimiterY.calculate(getJoystickYClean()),
-        pidController.calculate(
-            drivebaseSubsystem.getRotationRadians(), setpoint));
+        pidController.calculate(drivebaseSubsystem.getRotationRadians(), setpoint));
   }
 
   private double getJoystickXClean() {
