@@ -123,7 +123,7 @@ public final class Constants {
     public static final double NOTE_MAXIMUM_HEIGHT_METERS = 69;
 
     public static enum Direction {
-      FORWARD(6.0),
+      FORWARD(12.0),
       STOP(0.0),
       BACK(-6.0);
       private double voltage;
@@ -159,10 +159,10 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.01; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
-        public static final boolean INVERTED = true;
+        public static final boolean INVERTED = false;
         public static final double MAX_VOLTAGE = 12.0; // Volts
       }
 
@@ -172,10 +172,10 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.01; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
-        public static final boolean INVERTED = false;
+        public static final boolean INVERTED = true;
         public static final double MAX_VOLTAGE = 12.0; // Volts
       }
     }

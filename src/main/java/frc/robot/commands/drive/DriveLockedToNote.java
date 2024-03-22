@@ -3,7 +3,6 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -35,7 +34,7 @@ public class DriveLockedToNote extends Command {
     this.yJoystickDoubleSupplier = yJoystickDoubleSupplier;
     this.scalar = scalarInputDoubleSupplier;
 
-    pidController = new PIDController(3, 0, 0);
+    pidController = new PIDController(2, 0.2, 0);
     // May not want this, should test
     // pidController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(drivebaseSubsystem);
@@ -51,7 +50,9 @@ public class DriveLockedToNote extends Command {
         slewRateLimiterX.calculate(getJoystickXClean()),
         slewRateLimiterY.calculate(getJoystickYClean()),
         pidController.calculate(
-            targetNoteSupplier.get().xError().getRadians(), new Rotation2d().getRadians()));
+            drivebaseSubsystem.getRotationRadians(),
+            drivebaseSubsystem.getRotationRadians()
+                - targetNoteSupplier.get().xError().getRadians()));
   }
 
   private double getJoystickXClean() {

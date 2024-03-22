@@ -18,6 +18,7 @@ public class AIIOLimelight implements AIIO {
   private double yError = 0.0;
   private double targetArea = 0.0;
   private String targetClass = "";
+  private double stickangle;
 
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   NetworkTable limelight = inst.getTable("limelight-ai");
@@ -73,7 +74,10 @@ public class AIIOLimelight implements AIIO {
     inputs.currentPipeline = currentPipeline;
     inputs.validEntry = validEntry;
     inputs.targetArea = targetArea;
-    inputs.xError = xError;
+    if (xError != stickangle) {
+      stickangle = xError;
+    }
+    inputs.xError = stickangle;
     inputs.yError = yError;
     inputs.targetClass = targetClass;
   }

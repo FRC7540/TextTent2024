@@ -220,7 +220,7 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 275.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 140.0));
 
     operatorController
         .leftBumper()
@@ -253,7 +253,7 @@ public class RobotContainer {
     driverController
         .a()
         .debounce(0.02)
-        .onTrue(
+        .whileTrue(
             new DriveLockedStickyRotation(
                 () -> drivebaseSubsystem.getRotation().plus(new Rotation2d(Math.PI)),
                 () -> 0.0,
@@ -264,7 +264,7 @@ public class RobotContainer {
     driverController
         .y()
         .debounce(0.02)
-        .toggleOnTrue(
+        .whileTrue(
             new DriveLockedStickyRotation(
                 drivebaseSubsystem::getRotation,
                 driverController::getLeftX,
@@ -275,7 +275,7 @@ public class RobotContainer {
     driverController
         .x()
         .debounce(0.02)
-        .onTrue(
+        .toggleOnTrue(
             new DriveLockedToNote(
                 () -> RobotState.targetNote,
                 driverController::getLeftX,

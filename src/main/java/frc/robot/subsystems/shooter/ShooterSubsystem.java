@@ -60,7 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> wheelOneFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNeo550(Shooter.Flywheel.WheelOne.MOTOR_COUNT),
+          DCMotor.getNEO(Shooter.Flywheel.WheelOne.MOTOR_COUNT),
           Shooter.Flywheel.WheelOne.MOMENT_OF_INERTIA,
           Shooter.Flywheel.WheelOne.GEAR_RATIO);
 
@@ -90,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> wheelTwoFlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNeo550(Shooter.Flywheel.WheelTwo.MOTOR_COUNT),
+          DCMotor.getNEO(Shooter.Flywheel.WheelTwo.MOTOR_COUNT),
           Shooter.Flywheel.WheelTwo.MOMENT_OF_INERTIA,
           Shooter.Flywheel.WheelTwo.GEAR_RATIO);
 
