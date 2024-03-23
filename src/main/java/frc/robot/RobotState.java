@@ -5,10 +5,12 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.States.ClimberState;
 import frc.robot.util.States.IntakeState;
 import frc.robot.util.States.RobotNoteState;
 import frc.robot.util.States.ShooterState;
+import frc.robot.util.types.TargetNote;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotState {
@@ -20,6 +22,7 @@ public class RobotState {
   public static RobotNoteState robotNoteState;
   public static Pose2d noteTargetPose;
   public static Pose3d botVisionPose;
+  public static TargetNote targetNote;
 
   static {
     botVisionPose = new Pose3d();
@@ -30,6 +33,7 @@ public class RobotState {
     climberState = ClimberState.UNDEFINED;
     robotNoteState = RobotNoteState.UNDEFINED;
     noteTargetPose = new Pose2d();
+    targetNote = new TargetNote(new Rotation2d(), new Rotation2d(), 0, "");
   }
 
   public static void pushUpdate() {
@@ -40,5 +44,6 @@ public class RobotState {
     Logger.recordOutput("RobotState/climberState", climberState);
     Logger.recordOutput("RobotState/robotNoteState", robotNoteState);
     Logger.recordOutput("RobotState/noteTargetPose", noteTargetPose);
+    Logger.recordOutput("RobotState/TargetNote", targetNote.toString());
   }
 }

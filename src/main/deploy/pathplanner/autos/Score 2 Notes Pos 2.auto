@@ -18,9 +18,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Score&Intake Mid Note"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Score&Intake Mid Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
           }
         },
         {

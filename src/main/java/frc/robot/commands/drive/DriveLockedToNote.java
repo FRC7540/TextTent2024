@@ -3,17 +3,16 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.drivebase.DrivebaseSubsystem;
-import frc.robot.util.Functions;
+import frc.robot.util.types.TargetNote;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class DriveWhileLockedToTarget extends Command {
-  private final Supplier<Pose2d> targetPoseSupplier;
+public class DriveLockedToNote extends Command {
+  private final Supplier<TargetNote> targetNoteSupplier;
   private final DrivebaseSubsystem drivebaseSubsystem;
   private DoubleSupplier xJoystickDoubleSupplier;
   private DoubleSupplier yJoystickDoubleSupplier;
@@ -23,20 +22,21 @@ public class DriveWhileLockedToTarget extends Command {
   private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(40);
   private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(40);
 
-  public DriveWhileLockedToTarget(
-      Supplier<Pose2d> targetPoseSupplier,
+  public DriveLockedToNote(
+      Supplier<TargetNote> targetNoteSupplier,
       DoubleSupplier xJoystickDoubleSupplier,
       DoubleSupplier yJoystickDoubleSupplier,
       DoubleSupplier scalarInputDoubleSupplier,
       DrivebaseSubsystem drivebaseSubsystem) {
-    this.targetPoseSupplier = targetPoseSupplier;
+    this.targetNoteSupplier = targetNoteSupplier;
     this.drivebaseSubsystem = drivebaseSubsystem;
     this.xJoystickDoubleSupplier = xJoystickDoubleSupplier;
     this.yJoystickDoubleSupplier = yJoystickDoubleSupplier;
     this.scalar = scalarInputDoubleSupplier;
 
-    pidController = new PIDController(3, 0, 0);
-    pidController.enableContinuousInput(-Math.PI, Math.PI);
+    pidController = new PIDController(2, 0.2, 0);
+    // May not want this, should test
+    // pidController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(drivebaseSubsystem);
   }
 
@@ -51,8 +51,8 @@ public class DriveWhileLockedToTarget extends Command {
         slewRateLimiterY.calculate(getJoystickYClean()),
         pidController.calculate(
             drivebaseSubsystem.getRotationRadians(),
-            Functions.rotationFromPoseToTarget(targetPoseSupplier, drivebaseSubsystem::getPose)
-                .getRadians()));
+            drivebaseSubsystem.getRotationRadians()
+                - targetNoteSupplier.get().xError().getRadians()));
   }
 
   private double getJoystickXClean() {

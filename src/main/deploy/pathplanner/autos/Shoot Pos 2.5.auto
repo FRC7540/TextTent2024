@@ -2,19 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.28,
-      "y": 5.59
+      "x": 0.65,
+      "y": 4.45
     },
-    "rotation": 0
+    "rotation": -58.64999999999998
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Middle Runout (Blue)"
+            "name": "ShootNote"
           }
         }
       ]

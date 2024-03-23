@@ -12,6 +12,7 @@ public interface AIIO {
     public double xError = 0.0;
     public double yError = 0.0;
     public double targetArea = 0.0;
+    public String targetClass = "";
   }
 
   /** Updates the set of loggable inputs. */
