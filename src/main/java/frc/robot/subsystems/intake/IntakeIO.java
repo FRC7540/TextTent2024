@@ -6,7 +6,7 @@ public interface IntakeIO {
 
   @AutoLog
   public static class IntakeIOInputs {
-    double motorAppliedVoltage = 0.0;
+    public double motorAppliedVoltage = 0.0;
     public boolean intakeNoteSwitch = false; // limswitch for note enter intake
     public double intakeMotorVoltage = 0.0;
   }

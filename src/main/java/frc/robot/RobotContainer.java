@@ -42,6 +42,9 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingIO;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingIOServo;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingSubsystem;
 import frc.robot.subsystems.shooter.FlywheelIO;
 import frc.robot.subsystems.shooter.FlywheelIOSim;
 import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
@@ -74,6 +77,7 @@ public class RobotContainer {
   private IntakeSubsystem intakeSubsystem;
   private VisionSubsystem visionSubsystem;
   private ClimberSubsystem climberSubsystem;
+  private NoiseCancelingSubsystem noiseCancelingSubsystem;
 
   public CommandXboxController operatorController =
       new CommandXboxController(Constants.HID.operatorControlerPort);
@@ -210,22 +214,22 @@ public class RobotContainer {
     operatorController
         .rightTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 140.0));
 
     operatorController
         .leftTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 40.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 100.0));
 
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 140.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 60.0));
 
     operatorController
         .leftBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 300.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 20.0));
 
     // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
     // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
@@ -275,7 +279,7 @@ public class RobotContainer {
     driverController
         .x()
         .debounce(0.02)
-        .toggleOnTrue(
+        .whileTrue(
             new DriveLockedToNote(
                 () -> RobotState.targetNote,
                 driverController::getLeftX,
@@ -319,21 +323,23 @@ public class RobotContainer {
     System.out.println("Real robot detected!");
 
     // Only create the real IO layer if we need to
-    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIOSparkMax() {});
+    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIOSparkMax());
 
     drivebaseSubsystem =
         new DrivebaseSubsystem(
             new GyroIONavX(),
-            new ModuleIOSparkMax(0) {},
-            new ModuleIOSparkMax(1) {},
-            new ModuleIOSparkMax(2) {},
-            new ModuleIOSparkMax(3) {});
+            new ModuleIOSparkMax(0),
+            new ModuleIOSparkMax(1),
+            new ModuleIOSparkMax(2),
+            new ModuleIOSparkMax(3));
 
     visionSubsystem = new VisionSubsystem(new LimelightIO(), new AIIOLimelight());
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
 
-    climberSubsystem = new ClimberSubsystem(new ClimberIOVictor() {});
+    climberSubsystem = new ClimberSubsystem(new ClimberIOVictor());
+
+    noiseCancelingSubsystem = new NoiseCancelingSubsystem(new NoiseCancelingIOServo());
   }
 
   private void setupForSimulation() {
@@ -353,6 +359,8 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSim());
 
     climberSubsystem = new ClimberSubsystem(new ClimberIOSim());
+
+    noiseCancelingSubsystem = new NoiseCancelingSubsystem(new NoiseCancelingIO() {});
   }
 
   private void fillMissingSubsystems() {
@@ -376,7 +384,13 @@ public class RobotContainer {
 
     intakeSubsystem =
         intakeSubsystem != null ? intakeSubsystem : new IntakeSubsystem(new IntakeIO() {});
+
     climberSubsystem =
         climberSubsystem != null ? climberSubsystem : new ClimberSubsystem(new ClimberIO() {});
+
+    noiseCancelingSubsystem =
+        noiseCancelingSubsystem != null
+            ? noiseCancelingSubsystem
+            : new NoiseCancelingSubsystem(new NoiseCancelingIO() {});
   }
 }

@@ -16,7 +16,6 @@ package frc.robot;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.LocalADStarAK;
@@ -128,9 +127,9 @@ public class Robot extends LoggedRobot {
     // Necessary: see https://pathplanner.dev/pplib-pathfinding.html#custom-pathfinders
     Pathfinding.setPathfinder(new LocalADStarAK());
 
-    for (int port = 5800; port <= 5807; port++) {
-      PortForwarder.add(port, "limelight-april.local", port);
-    }
+    // for (int port = 5800; port <= 5807; port++) {
+    //   PortForwarder.add(port, "limelight-april.local", port);
+    // }
 
     robotContainer = new RobotContainer();
   }

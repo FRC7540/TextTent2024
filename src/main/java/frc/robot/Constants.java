@@ -202,6 +202,13 @@ public final class Constants {
     public static final double CLIMBER_ENCODER_DISTANCE_PER_ROTATION = 1;
   }
 
+  public static final class NoiseCanceling {
+    public static final int SERVO_ONE_PORT = 0;
+    public static final int SERVO_TWO_PORT = 1;
+    public static final Rotation2d SERVO_ONE_DEPLOYED_THRESHOLD = new Rotation2d(0.25 * Math.PI);
+    public static final Rotation2d SERVO_TWO_DEPLOYED_THRESHOLD = new Rotation2d(0.25 * Math.PI);
+  }
+
   public static final class Vision {
     public static final String APRIL_TAG_NETWORKTABLE_TOPIC_NAME = "limelight-april";
     public static final double AUTOINTAKE_AREA_THRESHOLD = 25;
