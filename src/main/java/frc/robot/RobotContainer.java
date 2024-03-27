@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -185,13 +186,13 @@ public class RobotContainer {
     CameraServer.addCamera(NoteCamera);
     Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
 
-    Shuffleboard.getTab("blah").add("dynfor", shooterSubsystem.sysIdDynamic(Direction.kForward));
-    Shuffleboard.getTab("blah").add("dynrev", shooterSubsystem.sysIdDynamic(Direction.kReverse));
+    Shuffleboard.getTab("blah").add("dynfor", drivebaseSubsystem.sysIdDynamic(Direction.kForward));
+    Shuffleboard.getTab("blah").add("dynrev", drivebaseSubsystem.sysIdDynamic(Direction.kReverse));
 
     Shuffleboard.getTab("blah")
-        .add("quasfor", shooterSubsystem.sysIdQuasistatic(Direction.kForward));
+        .add("quasfor", drivebaseSubsystem.sysIdQuasistatic(Direction.kForward));
     Shuffleboard.getTab("blah")
-        .add("quasrev", shooterSubsystem.sysIdQuasistatic(Direction.kReverse));
+        .add("quasrev", drivebaseSubsystem.sysIdQuasistatic(Direction.kReverse));
   }
 
   private void configureDefaultCommands() {
@@ -293,6 +294,11 @@ public class RobotContainer {
                 driverController::getLeftY,
                 driverController::getLeftTriggerAxis,
                 drivebaseSubsystem));
+
+    driverController
+        .leftBumper()
+        .debounce(0.02)
+        .onTrue(new InstantCommand(() -> drivebaseSubsystem.stopWithX()));
   }
 
   private void registerVisionConsumers() {
