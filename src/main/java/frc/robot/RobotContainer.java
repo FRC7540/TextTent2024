@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
@@ -114,7 +115,8 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 150.0));
+    NamedCommands.registerCommand(
+        "ShootNote", new ShootNote(shooterSubsystem, () -> 150.0).withTimeout(2.5));
     NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
@@ -182,6 +184,14 @@ public class RobotContainer {
     HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://limelight-ai.local:5800");
     CameraServer.addCamera(NoteCamera);
     Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
+
+    Shuffleboard.getTab("blah").add("dynfor", shooterSubsystem.sysIdDynamic(Direction.kForward));
+    Shuffleboard.getTab("blah").add("dynrev", shooterSubsystem.sysIdDynamic(Direction.kReverse));
+
+    Shuffleboard.getTab("blah")
+        .add("quasfor", shooterSubsystem.sysIdQuasistatic(Direction.kForward));
+    Shuffleboard.getTab("blah")
+        .add("quasrev", shooterSubsystem.sysIdQuasistatic(Direction.kReverse));
   }
 
   private void configureDefaultCommands() {
@@ -195,8 +205,8 @@ public class RobotContainer {
             () -> true,
             drivebaseSubsystem));
 
-    climberSubsystem.setDefaultCommand(
-        new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
+    // climberSubsystem.setDefaultCommand(
+    //     new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
   }
 
   private void configureBindings() {
@@ -214,22 +224,19 @@ public class RobotContainer {
     operatorController
         .rightTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 140.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 80));
 
     operatorController
         .leftTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 100.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 150.0));
 
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 60.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 100));
 
-    operatorController
-        .leftBumper()
-        .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 20.0));
+    operatorController.leftBumper().debounce(0.2).onTrue(new ShootNote(shooterSubsystem, () -> 37));
 
     // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
     // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));

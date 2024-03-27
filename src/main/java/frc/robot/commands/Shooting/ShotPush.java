@@ -1,7 +1,6 @@
 package frc.robot.commands.Shooting;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class ShotPush extends Command {
@@ -27,7 +26,6 @@ public class ShotPush extends Command {
 
   @Override
   public boolean isFinished() {
-    Trigger trig = new Trigger(shooterSubsystem::getShotLimitSwitch);
     return false;
   }
 }

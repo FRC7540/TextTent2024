@@ -58,7 +58,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
     // bevel pinion
     public static final double DRIVE_GEAR_RATIO = (45.0 * 22.0) / (DRIVE_PINON * 15.0);
-    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(33);
+    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(10);
     public static final double TRACK_WIDTH_X = Units.inchesToMeters(29.0);
     public static final double TRACK_WIDTH_Y = Units.inchesToMeters(29.0);
     public static final double DRIVE_BASE_RADIUS =
@@ -110,7 +110,7 @@ public final class Constants {
   public static final class Shooter {
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
     public static final int PUSHER_MOTOR_CAN_ID = 12;
-    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushed;
+    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean PUSHER_MOTOR_INVERTED = false;
 
     public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
@@ -159,7 +159,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.8; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
@@ -172,7 +172,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.8; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;

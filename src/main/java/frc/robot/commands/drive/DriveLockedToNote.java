@@ -44,14 +44,14 @@ public class DriveLockedToNote extends Command {
 
   @Override
   public void execute() {
-    drivebaseSubsystem.drivejoysticks((calculateChassisSpeeds()), true);
+    drivebaseSubsystem.drivejoysticks((calculateChassisSpeeds()), false);
   }
 
   public ChassisSpeeds calculateChassisSpeeds() {
     return new ChassisSpeeds(
         slewRateLimiterX.calculate(getJoystickXClean()),
         slewRateLimiterY.calculate(getJoystickYClean()),
-        pidController.calculate(targetNoteSupplier.get().xError().getRadians()));
+        pidController.calculate(targetNoteSupplier.get().xError().getRadians() * -1));
   }
 
   private double getJoystickXClean() {
