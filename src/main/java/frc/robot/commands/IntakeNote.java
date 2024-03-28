@@ -27,7 +27,7 @@ public class IntakeNote extends Command {
     }
 
     intakingTimer.start();
-    inatakeSubsystem.setMotorVoltage(5.25);
+    inatakeSubsystem.setMotorVoltage(7);
     shooterSubsystem.setPusherVoltage(1.5);
   }
 
