@@ -19,9 +19,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
 import frc.robot.commands.Shooting.ShootNote;
@@ -42,6 +44,9 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingIO;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingIOServo;
+import frc.robot.subsystems.noiseCanceling.NoiseCancelingSubsystem;
 import frc.robot.subsystems.shooter.FlywheelIO;
 import frc.robot.subsystems.shooter.FlywheelIOSim;
 import frc.robot.subsystems.shooter.FlywheelIOSparkMax;
@@ -74,6 +79,7 @@ public class RobotContainer {
   private IntakeSubsystem intakeSubsystem;
   private VisionSubsystem visionSubsystem;
   private ClimberSubsystem climberSubsystem;
+  private NoiseCancelingSubsystem noiseCancelingSubsystem;
 
   public CommandXboxController operatorController =
       new CommandXboxController(Constants.HID.operatorControlerPort);
@@ -110,7 +116,8 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 150.0));
+    NamedCommands.registerCommand(
+        "ShootNote", new ShootNote(shooterSubsystem, () -> 150.0).withTimeout(2.5));
     NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
@@ -178,6 +185,14 @@ public class RobotContainer {
     HttpCamera NoteCamera = new HttpCamera("NoteCamera", "http://limelight-ai.local:5800");
     CameraServer.addCamera(NoteCamera);
     Shuffleboard.getTab("Teleop").add(NoteCamera).withPosition(11, 4).withSize(9, 4);
+
+    Shuffleboard.getTab("blah").add("dynfor", drivebaseSubsystem.sysIdDynamic(Direction.kForward));
+    Shuffleboard.getTab("blah").add("dynrev", drivebaseSubsystem.sysIdDynamic(Direction.kReverse));
+
+    Shuffleboard.getTab("blah")
+        .add("quasfor", drivebaseSubsystem.sysIdQuasistatic(Direction.kForward));
+    Shuffleboard.getTab("blah")
+        .add("quasrev", drivebaseSubsystem.sysIdQuasistatic(Direction.kReverse));
   }
 
   private void configureDefaultCommands() {
@@ -191,8 +206,8 @@ public class RobotContainer {
             () -> true,
             drivebaseSubsystem));
 
-    climberSubsystem.setDefaultCommand(
-        new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
+    // climberSubsystem.setDefaultCommand(
+    //     new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
   }
 
   private void configureBindings() {
@@ -210,22 +225,19 @@ public class RobotContainer {
     operatorController
         .rightTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 200.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 80));
 
     operatorController
         .leftTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 40.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 150.0));
 
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 140.0));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 100));
 
-    operatorController
-        .leftBumper()
-        .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 300.0));
+    operatorController.leftBumper().debounce(0.2).onTrue(new ShootNote(shooterSubsystem, () -> 37));
 
     // driverController.rightBumper().debounce(0.3).whileTrue(new ExtendClimber(climberSubsystem));
     // driverController.leftBumper().debounce(0.3).whileTrue(new RetractClimber(climberSubsystem));
@@ -275,13 +287,18 @@ public class RobotContainer {
     driverController
         .x()
         .debounce(0.02)
-        .toggleOnTrue(
+        .whileTrue(
             new DriveLockedToNote(
                 () -> RobotState.targetNote,
                 driverController::getLeftX,
                 driverController::getLeftY,
                 driverController::getLeftTriggerAxis,
                 drivebaseSubsystem));
+
+    driverController
+        .leftBumper()
+        .debounce(0.02)
+        .onTrue(new InstantCommand(() -> drivebaseSubsystem.stopWithX()));
   }
 
   private void registerVisionConsumers() {
@@ -319,21 +336,23 @@ public class RobotContainer {
     System.out.println("Real robot detected!");
 
     // Only create the real IO layer if we need to
-    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIOSparkMax() {});
+    shooterSubsystem = new ShooterSubsystem(new FlywheelIOSparkMax(), new ShooterIOSparkMax());
 
     drivebaseSubsystem =
         new DrivebaseSubsystem(
             new GyroIONavX(),
-            new ModuleIOSparkMax(0) {},
-            new ModuleIOSparkMax(1) {},
-            new ModuleIOSparkMax(2) {},
-            new ModuleIOSparkMax(3) {});
+            new ModuleIOSparkMax(0),
+            new ModuleIOSparkMax(1),
+            new ModuleIOSparkMax(2),
+            new ModuleIOSparkMax(3));
 
     visionSubsystem = new VisionSubsystem(new LimelightIO(), new AIIOLimelight());
 
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSparkMax());
 
-    climberSubsystem = new ClimberSubsystem(new ClimberIOVictor() {});
+    climberSubsystem = new ClimberSubsystem(new ClimberIOVictor());
+
+    noiseCancelingSubsystem = new NoiseCancelingSubsystem(new NoiseCancelingIOServo());
   }
 
   private void setupForSimulation() {
@@ -353,6 +372,8 @@ public class RobotContainer {
     intakeSubsystem = new IntakeSubsystem(new IntakeIOSim());
 
     climberSubsystem = new ClimberSubsystem(new ClimberIOSim());
+
+    noiseCancelingSubsystem = new NoiseCancelingSubsystem(new NoiseCancelingIO() {});
   }
 
   private void fillMissingSubsystems() {
@@ -376,7 +397,13 @@ public class RobotContainer {
 
     intakeSubsystem =
         intakeSubsystem != null ? intakeSubsystem : new IntakeSubsystem(new IntakeIO() {});
+
     climberSubsystem =
         climberSubsystem != null ? climberSubsystem : new ClimberSubsystem(new ClimberIO() {});
+
+    noiseCancelingSubsystem =
+        noiseCancelingSubsystem != null
+            ? noiseCancelingSubsystem
+            : new NoiseCancelingSubsystem(new NoiseCancelingIO() {});
   }
 }

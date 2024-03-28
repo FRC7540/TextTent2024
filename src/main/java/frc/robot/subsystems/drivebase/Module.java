@@ -61,8 +61,8 @@ public class Module {
         break;
       default:
         // If we are not simulating we must be on a real robot.
-        driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
-        driveFeedback = new PIDController(0.04, 0.0, 0.0);
+        driveFeedforward = new SimpleMotorFeedforward(0.21696, 2.7307, 0.28586); // 0,0,0
+        driveFeedback = new PIDController(0.095207, 0.0, 0.0); // p=0.04
         turnFeedback = new PIDController(2.0, 0.001, 0.07);
         break;
     }

@@ -9,9 +9,8 @@ import frc.robot.Constants;
 public class ShooterIOSparkMax implements ShooterIO {
 
   private final CANSparkMax firingMotor =
-      new CANSparkMax(
-          Constants.Shooter.PUSHER_MOTOR_CAN_ID, Constants.Shooter.SPARK_MAX_MOTOR_ONE_TYPE);
-  private final CANSparkMax firingMotorTwo = new CANSparkMax(14, MotorType.kBrushed);
+      new CANSparkMax(Constants.Shooter.PUSHER_MOTOR_CAN_ID, MotorType.kBrushless);
+  private final CANSparkMax firingMotorTwo = new CANSparkMax(14, MotorType.kBrushless);
   private final DigitalInput holderLimitSwitch =
       new DigitalInput(Constants.Shooter.HOLDER_LIMIT_SWITCH_PORT);
   private final DigitalInput shotLimitSwitch =
@@ -33,7 +32,7 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.holdingLimitSwitch = !holderLimitSwitch.get();
+    inputs.holdingLimitSwitch = holderLimitSwitch.get();
     inputs.shotLimitSwitch = !shotLimitSwitch.get();
     inputs.firingMotorAppliedVoltage = firingMotorApplliedVoltage;
   }

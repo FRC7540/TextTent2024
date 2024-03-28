@@ -110,7 +110,7 @@ public final class Constants {
   public static final class Shooter {
     public static final double NOMINAL_LOOP_PERIOD = 0.02;
     public static final int PUSHER_MOTOR_CAN_ID = 12;
-    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushed;
+    public static final MotorType SPARK_MAX_MOTOR_ONE_TYPE = MotorType.kBrushless;
     public static final boolean PUSHER_MOTOR_INVERTED = false;
 
     public static final int HOLDER_LIMIT_SWITCH_PORT = 1;
@@ -159,7 +159,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.8; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = false;
@@ -172,7 +172,7 @@ public final class Constants {
         public static final double NOMINAL_DISCRETIZATION_TIMESTEP = 0.020; // Seconds
         public static final Vector<N1> QELMS = VecBuilder.fill(16.0); // Rads per second
         public static final Vector<N1> RELMS = VecBuilder.fill(12.0); // Volts
-        public static final double MOMENT_OF_INERTIA = 0.105; // 0.105
+        public static final double MOMENT_OF_INERTIA = 0.8; // 0.105
         public static final int MOTOR_COUNT = 1;
         public static final double GEAR_RATIO = 4.0;
         public static final boolean INVERTED = true;
@@ -200,6 +200,13 @@ public final class Constants {
     public static final int CLIMBER_MOTOR_CONTROLLER_CAN_ID = 16;
     public static final int CLIMBER_ENCODER_PORT = 4;
     public static final double CLIMBER_ENCODER_DISTANCE_PER_ROTATION = 1;
+  }
+
+  public static final class NoiseCanceling {
+    public static final int SERVO_ONE_PORT = 0;
+    public static final int SERVO_TWO_PORT = 1;
+    public static final Rotation2d SERVO_ONE_DEPLOYED_THRESHOLD = new Rotation2d(0.25 * Math.PI);
+    public static final Rotation2d SERVO_TWO_DEPLOYED_THRESHOLD = new Rotation2d(0.25 * Math.PI);
   }
 
   public static final class Vision {

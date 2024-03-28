@@ -7,7 +7,6 @@ import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,10 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SysIdRoutine sysId;
 
   private final LinearSystem<N1, N1, N1> wheelOneFlywheelPlant =
-      LinearSystemId.createFlywheelSystem(
-          DCMotor.getNEO(Shooter.Flywheel.WheelOne.MOTOR_COUNT),
-          Shooter.Flywheel.WheelOne.MOMENT_OF_INERTIA,
-          Shooter.Flywheel.WheelOne.GEAR_RATIO);
+      LinearSystemId.identifyVelocitySystem(0.041602, 0.002482);
 
   private final KalmanFilter<N1, N1, N1> wheelOneObserver =
       new KalmanFilter<>(
@@ -89,10 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
           Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
 
   private final LinearSystem<N1, N1, N1> wheelTwoFlywheelPlant =
-      LinearSystemId.createFlywheelSystem(
-          DCMotor.getNEO(Shooter.Flywheel.WheelTwo.MOTOR_COUNT),
-          Shooter.Flywheel.WheelTwo.MOMENT_OF_INERTIA,
-          Shooter.Flywheel.WheelTwo.GEAR_RATIO);
+      LinearSystemId.identifyVelocitySystem(0.041602, 0.002482);
 
   private final KalmanFilter<N1, N1, N1> wheelTwoObserver =
       new KalmanFilter<>(
@@ -137,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 (state) -> Logger.recordOutput("Flywheel/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> {
-                  setBothWheelVoltage(voltage.in(Units.Volts));
+                  flywheelIO.setWheelTwoVoltage(voltage.in(Units.Volts));
                 },
                 null,
                 this));
@@ -189,9 +182,11 @@ public class ShooterSubsystem extends SubsystemBase {
     wheelTwoloop.correct(VecBuilder.fill(flywheelInputs.wheelTwoRadSec));
     if (Robot.isReal()) {
       wheelOneController.latencyCompensate(
-          wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.0025);
+          wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.003);
       wheelTwoController.latencyCompensate(
-          wheelTwoFlywheelPlant, Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP, 0.0025);
+          wheelTwoFlywheelPlant,
+          Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP,
+          0.004); // 0.0025
     }
 
     wheelOneloop.predict(Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);

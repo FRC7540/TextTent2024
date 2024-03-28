@@ -9,7 +9,8 @@ public class ShootNote extends SequentialCommandGroup {
   public ShootNote(ShooterSubsystem shooterSubsystem, DoubleSupplier speed) {
     addCommands(
         new FlywheelSpinToTargetVelocity(shooterSubsystem, speed),
+        // new WaitCommand(0.5),
         new ShotPush(shooterSubsystem, speed.getAsDouble()).withTimeout(1),
-        new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> 0.0));
+        new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> 0.0).withTimeout(1));
   }
 }

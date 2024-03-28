@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.States.ClimberState;
 import frc.robot.util.States.IntakeState;
+import frc.robot.util.States.NoiseCancelingState;
 import frc.robot.util.States.RobotNoteState;
 import frc.robot.util.States.ShooterState;
 import frc.robot.util.types.TargetNote;
@@ -23,6 +24,7 @@ public class RobotState {
   public static Pose2d noteTargetPose;
   public static Pose3d botVisionPose;
   public static TargetNote targetNote;
+  public static NoiseCancelingState noiseCancelingState;
 
   static {
     botVisionPose = new Pose3d();
@@ -34,6 +36,7 @@ public class RobotState {
     robotNoteState = RobotNoteState.UNDEFINED;
     noteTargetPose = new Pose2d();
     targetNote = new TargetNote(new Rotation2d(), new Rotation2d(), 0, "");
+    noiseCancelingState = NoiseCancelingState.UNDEFINED;
   }
 
   public static void pushUpdate() {
@@ -44,6 +47,7 @@ public class RobotState {
     Logger.recordOutput("RobotState/climberState", climberState);
     Logger.recordOutput("RobotState/robotNoteState", robotNoteState);
     Logger.recordOutput("RobotState/noteTargetPose", noteTargetPose);
-    Logger.recordOutput("RobotState/TargetNote", targetNote.toString());
+    Logger.recordOutput("RobotState/targetNote", targetNote.toString());
+    Logger.recordOutput("RobotState/noiseCancelingState", noiseCancelingState);
   }
 }
