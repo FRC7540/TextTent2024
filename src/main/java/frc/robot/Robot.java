@@ -16,6 +16,10 @@ package frc.robot;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.LocalADStarAK;
@@ -45,6 +49,10 @@ public class Robot extends LoggedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+  AddressableLED lads = new AddressableLED(3);
+
+  AddressableLEDBuffer ladsbuffer = new AddressableLEDBuffer(44);
+
   @Override
   public void robotInit() {
     // Record metadata
@@ -134,12 +142,21 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
   }
 
+  public Color currentleds = new Color(0, 0, 0);
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
     VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
     RobotState.pushUpdate();
+    currentleds =
+        DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
+            ? new Color(1, 1, 255)
+            : new Color(255, 1, 1);
+    for (int i = 0; i < 44; i++) {
+      ladsbuffer.setLED(i, currentleds);
+    }
+    // lads.setData(ladsbuffer);
   }
 
   /** This function is called once when autonomous is enabled. */

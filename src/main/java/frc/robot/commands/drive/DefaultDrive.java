@@ -17,9 +17,10 @@ public class DefaultDrive extends Command {
   private final DoubleSupplier sclaerInputDoubleSupplier;
   private final BooleanSupplier feildOriented;
 
-  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(40);
-  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(40);
-  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(30);
+  private final SlewRateLimiter slewRateLimiterX = new SlewRateLimiter(0.5);
+  private final SlewRateLimiter slewRateLimiterY = new SlewRateLimiter(0.5);
+  private final SlewRateLimiter slewRateLimiterTheta = new SlewRateLimiter(0.5);
+  private boolean sticky;
 
   public DefaultDrive(
       DoubleSupplier directionX,
@@ -44,26 +45,35 @@ public class DefaultDrive extends Command {
     Double joyStickX =
         (MathUtil.applyDeadband(xJoystickDoubleSupplier.getAsDouble(), 0.1)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25)
-            * 1.0;
+            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.05)
+            * 0.25;
 
     Double joyStickY =
-        (MathUtil.applyDeadband(yJoystickDoubleSupplier.getAsDouble(), 0.1)
+        (MathUtil.applyDeadband(yJoystickDoubleSupplier.getAsDouble(), 0.05)
                 * Constants.Drivebase.MAX_LINEAR_SPEED)
-            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25)
-            * 1.0;
+            * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.05)
+            * 0.25;
 
     Double joyStickTheta =
         ((MathUtil.applyDeadband(thetaJoystickDoubleSupplier.getAsDouble(), 0.1)
                     * Constants.Drivebase.MAX_ANGULAR_SPEED)
-                * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.25))
+                * MathUtil.clamp(sclaerInputDoubleSupplier.getAsDouble() - 1, -1, -0.1))
             * Constants.HID.thetaJoystickScalar
-            * 1.0;
-    drivebaseSubsystem.drivejoysticks(
-        new ChassisSpeeds(
-            slewRateLimiterX.calculate(joyStickX),
-            slewRateLimiterY.calculate(joyStickY),
-            slewRateLimiterTheta.calculate(joyStickTheta)),
-        feildOriented.getAsBoolean());
+            * 0.25;
+
+    if (joyStickX != 0 || joyStickY != 0 || joyStickTheta != 0) {
+      drivebaseSubsystem.drivejoysticks(
+          new ChassisSpeeds(
+              slewRateLimiterX.calculate(joyStickX),
+              slewRateLimiterY.calculate(joyStickY),
+              slewRateLimiterTheta.calculate(joyStickTheta)),
+          feildOriented.getAsBoolean());
+      sticky = false;
+    } else {
+      if (!sticky) {
+        drivebaseSubsystem.stopWithX();
+        sticky = true;
+      }
+    }
   }
 }

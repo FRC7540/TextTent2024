@@ -113,11 +113,14 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     setupDashboard();
     registerTriggers();
+    ledmoment();
   }
+
+  private void ledmoment() {}
 
   private void registerNamedCommands() {
     NamedCommands.registerCommand(
-        "ShootNote", new ShootNote(shooterSubsystem, () -> 150.0).withTimeout(2.5));
+        "ShootNote", new ShootNote(shooterSubsystem, () -> 150.0).withTimeout(1.3));
     NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
@@ -206,8 +209,8 @@ public class RobotContainer {
             () -> true,
             drivebaseSubsystem));
 
-    // climberSubsystem.setDefaultCommand(
-    //     new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
+    climberSubsystem.setDefaultCommand(
+        new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
   }
 
   private void configureBindings() {
@@ -220,12 +223,13 @@ public class RobotContainer {
     operatorController
         .x()
         .debounce(0.02)
-        .onTrue(new frc.robot.commands.IntakeNote(intakeSubsystem, shooterSubsystem));
+        .onTrue(
+            new frc.robot.commands.IntakeNote(intakeSubsystem, shooterSubsystem).withTimeout(5));
 
     operatorController
         .rightTrigger()
         .debounce(0.02)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 80));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 275));
 
     operatorController
         .leftTrigger()
@@ -235,7 +239,7 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 100));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 250));
 
     operatorController.leftBumper().debounce(0.2).onTrue(new ShootNote(shooterSubsystem, () -> 37));
 

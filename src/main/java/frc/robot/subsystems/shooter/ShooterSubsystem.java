@@ -182,11 +182,11 @@ public class ShooterSubsystem extends SubsystemBase {
     wheelTwoloop.correct(VecBuilder.fill(flywheelInputs.wheelTwoRadSec));
     if (Robot.isReal()) {
       wheelOneController.latencyCompensate(
-          wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.003);
+          wheelOneFlywheelPlant, Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP, 0.0025);
       wheelTwoController.latencyCompensate(
           wheelTwoFlywheelPlant,
           Shooter.Flywheel.WheelTwo.NOMINAL_DISCRETIZATION_TIMESTEP,
-          0.004); // 0.0025
+          0.0025); // 0.0025
     }
 
     wheelOneloop.predict(Shooter.Flywheel.WheelOne.NOMINAL_DISCRETIZATION_TIMESTEP);
