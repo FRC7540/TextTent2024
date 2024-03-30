@@ -14,6 +14,7 @@ package frc.robot.subsystems.drivebase;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -82,6 +83,8 @@ public class DrivebaseSubsystem extends SubsystemBase {
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::runVelocity,
         new HolonomicPathFollowerConfig(
+            new PIDConstants(1.65),
+            new PIDConstants(1),
             Constants.Drivebase.MAX_LINEAR_SPEED,
             Constants.Drivebase.DRIVE_BASE_RADIUS,
             new ReplanningConfig()),

@@ -11,6 +11,7 @@ import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -25,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.Shooting.FlywheelSpinToTargetVelocity;
+import frc.robot.commands.IntakeNoteAndBackOff;
 import frc.robot.commands.Shooting.ShootNote;
 import frc.robot.commands.drive.DefaultDrive;
 import frc.robot.commands.drive.DriveLockedStickyRotation;
@@ -59,7 +60,6 @@ import frc.robot.subsystems.vison.AIIOLimelight;
 import frc.robot.subsystems.vison.LimelightIO;
 import frc.robot.subsystems.vison.VisionIO;
 import frc.robot.subsystems.vison.VisionSubsystem;
-import frc.robot.util.States.ChamberState;
 import frc.robot.util.types.TargetNote;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -114,13 +114,44 @@ public class RobotContainer {
     setupDashboard();
     registerTriggers();
     ledmoment();
+    Trigger nulls =
+        new Trigger(() -> DriverStation.getMatchTime() <= 30)
+            .and(DriverStation::isTeleop)
+            .onTrue(
+                new InstantCommand(
+                        () -> driverController.getHID().setRumble(RumbleType.kRightRumble, 0.5))
+                    .andThen(Commands.waitSeconds(1))
+                    .andThen(
+                        () -> driverController.getHID().setRumble(RumbleType.kRightRumble, 0.0)));
+    Trigger nulls1 =
+        new Trigger(() -> DriverStation.getMatchTime() <= 15)
+            .and(DriverStation::isTeleop)
+            .onTrue(
+                new InstantCommand(
+                        () -> driverController.getHID().setRumble(RumbleType.kLeftRumble, 0.75))
+                    .andThen(Commands.waitSeconds(1))
+                    .andThen(
+                        () -> driverController.getHID().setRumble(RumbleType.kLeftRumble, 0.0)));
+    Trigger nulls2 =
+        new Trigger(() -> DriverStation.getMatchTime() <= 10)
+            .and(DriverStation::isTeleop)
+            .onTrue(
+                new InstantCommand(
+                        () -> driverController.getHID().setRumble(RumbleType.kBothRumble, 1))
+                    .andThen(
+                        Commands.waitSeconds(7)
+                            .andThen(
+                                new InstantCommand(
+                                    () ->
+                                        driverController
+                                            .getHID()
+                                            .setRumble(RumbleType.kBothRumble, 0)))));
   }
 
   private void ledmoment() {}
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand(
-        "ShootNote", new ShootNote(shooterSubsystem, () -> 150.0).withTimeout(1.3));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 260.0));
     NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
@@ -211,20 +242,53 @@ public class RobotContainer {
 
     climberSubsystem.setDefaultCommand(
         new RunCommand(() -> climberSubsystem.setClimberMotorVoltage(0), climberSubsystem));
+
+    intakeSubsystem.setDefaultCommand(
+        new RunCommand(() -> intakeSubsystem.setMotorVoltage(0), intakeSubsystem));
+
+    shooterSubsystem.setDefaultCommand(
+        new RunCommand(() -> shooterSubsystem.setPusherVoltage(0), shooterSubsystem));
   }
 
   private void configureBindings() {
 
     operatorController
-        .a()
-        .debounce(0.2)
-        .onTrue(new FlywheelSpinToTargetVelocity(shooterSubsystem, () -> flywheelSpeedInput.get()));
+        .povUp()
+        .debounce(0.02)
+        .whileTrue(new RunCommand(() -> shooterSubsystem.setPusherVoltage(6), shooterSubsystem));
+
+    operatorController
+        .povDown()
+        .debounce(0.02)
+        .whileTrue(new RunCommand(() -> shooterSubsystem.setPusherVoltage(-6), shooterSubsystem));
+
+    operatorController
+        .povLeft()
+        .debounce(0.02)
+        .whileTrue(
+            new RunCommand(
+                    () -> {
+                      shooterSubsystem.setPusherVoltage(-6);
+                      intakeSubsystem.setMotorVoltage(-6);
+                    },
+                    shooterSubsystem)
+                .withTimeout(3));
+
+    operatorController
+        .povRight()
+        .debounce(0.02)
+        .whileTrue(
+            new RunCommand(
+                () -> {
+                  shooterSubsystem.setPusherVoltage(6);
+                  intakeSubsystem.setMotorVoltage(6);
+                },
+                shooterSubsystem));
 
     operatorController
         .x()
         .debounce(0.02)
-        .onTrue(
-            new frc.robot.commands.IntakeNote(intakeSubsystem, shooterSubsystem).withTimeout(5));
+        .onTrue(new IntakeNoteAndBackOff(intakeSubsystem, shooterSubsystem));
 
     operatorController
         .rightTrigger()
@@ -239,7 +303,7 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .debounce(0.2)
-        .onTrue(new ShootNote(shooterSubsystem, () -> 250));
+        .onTrue(new ShootNote(shooterSubsystem, () -> 100));
 
     operatorController.leftBumper().debounce(0.2).onTrue(new ShootNote(shooterSubsystem, () -> 37));
 
@@ -320,11 +384,12 @@ public class RobotContainer {
   public void initPathPlanner() {}
 
   public void registerTriggers() {
-    new Trigger(
-            () -> RobotState.targetNote.targetArea() >= Constants.Vision.AUTOINTAKE_AREA_THRESHOLD)
-        .and(() -> shooterSubsystem.getChamberState() != ChamberState.EMPTY)
-        .debounce(0.2)
-        .whileTrue(new IntakeNote(intakeSubsystem, shooterSubsystem));
+    // new Trigger(
+    //         () -> RobotState.targetNote.targetArea() >=
+    // Constants.Vision.AUTOINTAKE_AREA_THRESHOLD)
+    //     .and(() -> shooterSubsystem.getChamberState() != ChamberState.EMPTY)
+    //     .debounce(0.2)
+    //     .whileTrue(new IntakeNote(intakeSubsystem, shooterSubsystem));
   }
 
   /**

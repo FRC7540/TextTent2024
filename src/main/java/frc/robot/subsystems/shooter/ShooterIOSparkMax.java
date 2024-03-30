@@ -32,7 +32,7 @@ public class ShooterIOSparkMax implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.holdingLimitSwitch = holderLimitSwitch.get();
+    inputs.holdingLimitSwitch = !holderLimitSwitch.get();
     inputs.shotLimitSwitch = !shotLimitSwitch.get();
     inputs.firingMotorAppliedVoltage = firingMotorApplliedVoltage;
   }

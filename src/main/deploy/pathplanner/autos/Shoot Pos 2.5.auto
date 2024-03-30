@@ -16,6 +16,12 @@
           "data": {
             "name": "ShootNote"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leave 2.5"
+          }
         }
       ]
     }
