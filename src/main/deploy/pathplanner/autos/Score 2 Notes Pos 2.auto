@@ -18,12 +18,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [

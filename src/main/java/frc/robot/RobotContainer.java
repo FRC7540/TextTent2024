@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteAndBackOff;
 import frc.robot.commands.Shooting.ShootNote;
 import frc.robot.commands.drive.DefaultDrive;
@@ -151,9 +150,10 @@ public class RobotContainer {
   private void ledmoment() {}
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 260.0));
+    NamedCommands.registerCommand("ShootNote", new ShootNote(shooterSubsystem, () -> 275.0));
     NamedCommands.registerCommand("ShootAmp", new ShootNote(shooterSubsystem, () -> 20.0));
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intakeSubsystem, shooterSubsystem));
+    NamedCommands.registerCommand(
+        "IntakeNote", new IntakeNoteAndBackOff(intakeSubsystem, shooterSubsystem));
   }
 
   private void setupDashboard() {
